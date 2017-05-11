@@ -171,7 +171,13 @@ The reader is presumed to be familiar with the basic concepts and definitions of
 
 \section{Basic Definitions}
 
-\definition The types of \hcn{} are defined as follows:
+We begin by giving some definitions from the paper where \hcn{} is defined \cite{DBLP:conf/kr/CharalambidisR14}, for the readers' convenience. These definitions are crucial to the understanding of the rest of the text.
+
+\begin{definition}{\emph{Types}}
+
+The type system of \hcn{} is based on two base types: $o$, the type of the boolean domain and $\iota$, the type of the individuals (data objects). For example, every classical logic programming term is of type $\iota$.
+
+The types of \hcn{} are defined as follows:
 
 \begin{center}
   \begin{tabular}{llll}
@@ -189,6 +195,51 @@ The argument type $\rho$ consists of the following subtypes:
     $\kappa$ & $:=$ & $\iota \rightarrow o ~~|~ \left( \iota \rightarrow \kappa \right)$ & \hspace*{2.5cm} \emph{(set)} \\
   \end{tabular}
 \end{center}
+\end{definition}
+
+The operator \msf{\rightarrow} is right-associative.
+
+Therefore, a functional type that is different from \msf{\iota} can also be written as \msf{\iota^n \rightarrow \iota}, \msf{n \ge 1}.
+Similarly, a set type can also be written in the form \msf{\iota^n \rightarrow \mathnormal{o}}, \msf{n \ge 1}.
+Finally, every predicate type $\pi$ can be written in the form \msf{\mathnormal{\rho}_1 \rightarrow \dots \rightarrow \mathnormal{\rho}_n \rightarrow \mathnormal{o}}, \msf{n \ge 0} (for \msf{n = 0} we assume that $\pi = o$).
+
+\begin{definition}{\emph{Alphabet}}
+
+The alphabet of \hcn{} consists of:
+\begin{enumerate}
+  \item \emph{Predicate variables} of every predicate type $\pi$.
+  \item \emph{Predicate constants} of every predicate type $\pi$.
+  \item \emph{Individual variables} of type $\iota$.
+  \item \emph{Individual constants} of type $\iota$.
+  \item \emph{Function symbols} of every functional type $\sigma \ne \iota$.
+  \item The following logical constant symbols:
+        \begin{enumerate}
+          \item the \emph{propositional constants} \msf{false} and \msf{true}
+                of type $o$;
+          \item the \emph{equality constant} \msf{\approx}
+                of type $\iota \rightarrow \iota \rightarrow o$;
+          \item the \emph{generalised disjunction and conjunction constants} \msf{\bigvee_{\pi}} and \msf{\bigwedge_{\pi}}
+                of type $\pi \rightarrow \pi \rightarrow \pi$,
+                for every predicate type $\pi$;
+          \item the \emph{equivalence constants} $\leftrightarrow_{\pi}$
+                of type $\pi \rightarrow \pi \rightarrow o$,
+                for every predicate type $\pi$;
+          \item the \emph{existential quantifiers} $\exists_{\mu}$
+                of type $\left( \mu \rightarrow o \right)$,
+                for every existential type $\mu$;
+          \item the \emph{negation constant} $\sim$ of type $o \rightarrow o$.
+        \end{enumerate}
+  \item The \emph{abstractor} $\lambda$ and the \emph{parentheses} ``\msf{(}'' and ``\msf{)}''.
+\end{enumerate}
+\end{definition}
+
+\section{Notations}
+
+In the following, we will write \msf{\widehat{A}} to denote a (possibly empty) sequence \msf{\langle A_1, \ldots, A_n \rangle}.
+
+A body expression of the form \msf{\left( E_1 \approx E_2 \right)} will be called an \emph{equality}, while a body expression of the form \msf{\sim \exists \widehat{V} \left( E_1 \approx E_2 \right)} will be called an \emph{inequality}; in the latter case \msf{\widehat{V}} may be empty, in which case the inequality is of the form \msf{\sim \left( E_1 \approx E_2 \right)}.
+
+Let \msf{\widehat{E}} and \msf{\widehat{E}'}, where all \msf{E_i}, \msf{E_i'} are of type $\iota$. We will write \msf{\left( \widehat{E} \approx \widehat{E}' \right)} to denote the expression \msf{\left( E_1 \approx E_1' \right) \land \dots \land \left( E_n \approx E_n' \right)}; if \msf{n = 0}, then the conjunction is the constant \msf{true}.
 
 \chapter{THE PROOF PROCEDURE}
 
