@@ -249,7 +249,7 @@ Let \msf{\widehat{E}} and \msf{\widehat{E}'}, where all \msf{E_i}, \msf{E_i'} ar
 
 Let \msf{P} be a program and let \msf{G_{k}} and \msf{G_{k+1}} be goal clauses.
 
-Let \msf{G_{k}} be a conjunction \msf{\leftarrow A_1 \land \dots \land A_n}, where each \msf{A_i} is a body expression of type \msf{o}.
+Let \msf{G_{k}} be a conjunction \msf{\leftarrow A_1 \land \dots \land A_n}, where each \msf{A_i} is a body expression of type $o$.
 
 Let \msf{A_i} be one of \msf{A_1, \ldots, A_n} and let us call it the \emph{selected expression}.
 
@@ -266,7 +266,7 @@ We say that \msf{G_{k+1}} \emph{is derived in one step} from \msf{G_k} using \ms
         using \msf{\theta = \epsilon}, where \msf{j \in \{1,2\}};
   \item if \msf{A_i} is \msf{\left( \exists V ~ E \right)},
         then \msf{G_{k+1} = \leftarrow A_1 \land \dots \land E \land \dots \land A_n} is derived from \msf{G_k} using \msf{\theta = \epsilon};
-  \item if \msf{A_i \rightsquigarrow A_i'},
+  \item if \msf{A_i \rightsquigarrow A_i'}, namely \msf{A_i} is reduced to \msf{A_i'},
         then \msf{G_{k+1} = \leftarrow A_1 \land \dots \land A_i' \land \dots \land A_n} is derived from \msf{G_k} using \msf{\theta = \epsilon};
   \item if \msf{A_i} is \msf{\left( E_1 \approx E_2 \right)},
         then \msf{G_{k+1} = \leftarrow A' \theta} is derived from \msf{G_k} using \msf{\theta = mgu \left( E_1, E_2 \right)};
@@ -276,17 +276,17 @@ We say that \msf{G_{k+1}} \emph{is derived in one step} from \msf{G_k} using \ms
         using \msf{\theta = \left\{ R \middle/ \left( \lambda \widehat{X} . \left( \widehat{X} \approx \widehat{E} \right) \bigvee_{\kappa} R' \right) \right\}},
         where \msf{R'} is a fresh predicate variable of type \msf{\kappa};
   \item if \msf{A_i} is \msf{\sim \exists \widehat{V} ~ E}
-        and \msf{A_i} is negatively reduced to \msf{A_i'},
+        and \msf{A_i} is negatively-reduced to \msf{A_i'}, \\
         then \msf{G_{k+1} = \leftarrow A_1 \land \dots \land A_i' \land \dots \land A_n} is derived from \msf{G_k} using \msf{\theta = \epsilon};
   \item if \msf{A_i} is \msf{\sim \exists \widehat{V} \left( R ~ \widehat{E} \right)}
         and \msf{R} is a predicate variable of type \msf{\kappa}
-        and \msf{R \not\in \widehat{V}},
+        and \msf{R \not\in \widehat{V}}, \\
         then \msf{G_{k+1} = \leftarrow A' \theta} is derived from \msf{G_k}
         using \msf{\theta = \left\{ R \middle/ \left( \lambda \widehat{X} . \sim \exists \widehat{V} \left( \widehat{X} \approx \widehat{E} \right) \bigwedge_{\kappa} R' \right) \right\}},
         where \msf{R'} is a fresh predicate variable of type \msf{\kappa};
   \item is \msf{A_i} is \msf{\sim \exists \widehat{V} \sim \left( R ~ \widehat{E} \right)}
         and \msf{R} is a predicate variable of type \msf{\kappa}
-        and \msf{R \not\in \widehat{V}},
+        and \msf{R \not\in \widehat{V}}, \\
         then \msf{G_{k+1} = \leftarrow A' \theta} is derived from \msf{G_k}
         using \msf{\theta = \left\{ R \middle/ \left( \lambda \widehat{X} . ~ \exists \widehat{V} \left( \widehat{X} \approx \widehat{E} \right) \bigvee_{\kappa} R' \right) \right\}}.
 \end{enumerate}
@@ -297,7 +297,7 @@ We say that \msf{G_{k+1}} \emph{is derived in one step} from \msf{G_k} using \ms
 \section{Reduction}
 \begin{definition}{\emph{Reduction}}
 
-Let \msf{P} be a program and \msf{E}, \msf{E'} be body expressions of type \msf{o}.
+Let \msf{P} be a program and \msf{E}, \msf{E'} be body expressions of type $o$.
 
 We say that \msf{E} is reduced (with respect to \msf{P}) to \msf{E'} (denoted as \msf{E \rightsquigarrow E'}) if one of following conditions applies:
 
@@ -327,7 +327,7 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
         then \msf{B' = B_1' \land B_2'}, \\ where \msf{B_j' = \sim \exists \widehat{U} \left( A_1 \land \dots \land E_j \land \dots \land A_n \right)}, for \msf{j \in \{ 1, 2 \}};
   \item if \msf{A_i} is \msf{\left( \exists V ~ E \right)},
         then \msf{B' = \sim \exists \widehat{U} V \left( A_1 \land \dots \land E \land \dots \land A_n \right)};
-  \item if \msf{A_i \rightsquigarrow A_i'},
+  \item if \msf{A_i \rightsquigarrow A_i'}, namely \msf{A_i} is reduced to \msf{A_i'},
         then \msf{B' = \sim \exists \widehat{U} \left( A_1 \land \dots \land A_i' \land \dots \land A_n \right)};
   \item if \msf{A_i} is \msf{\left( E_1 \approx E_2 \right)}, then:
         \begin{enumerate}
