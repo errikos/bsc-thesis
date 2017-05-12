@@ -255,6 +255,8 @@ The set of body expressions of \hcn{} is recursively defined as follows:
 \end{enumerate}
 \end{definition}
 
+The notions of \emph{free} and \emph{bound} variables are defined as usual. A body expression is called \emph{closed} if it does not contain any free variables.
+
 In the following, we will write \msf{\widehat{A}} to denote a (possibly empty) sequence \msf{\langle A_1, \ldots, A_n \rangle}.
 
 A body expression of the form \msf{\left( E_1 \approx E_2 \right)} will be called an \emph{equality}, while a body expression of the form \msf{\sim \exists \widehat{V} \left( E_1 \approx E_2 \right)} will be called an \emph{inequality}; in the latter case \msf{\widehat{V}} may be empty, in which case the inequality is of the form \msf{\sim \left( E_1 \approx E_2 \right)}.
@@ -271,6 +273,20 @@ The set of clausal expressions of \hcn{} is defined as follows:
 \end{enumerate}
 
 All clausal expressions of \hcn{} have type $o$.
+\end{definition}
+
+\begin{definition}{\emph{Program}}
+
+A program of \hcn{} is a finite set of program clauses of \hcn{}.
+\end{definition}
+
+\begin{definition}{\emph{Completion of a program}}
+
+Let \msf{P} be a program and let \msf{p} be a predicate constant of type $\pi$. Then, the \emph{completed definition} for \msf{p} with respect to \msf{P} is obtained as follows:
+\begin{itemize}
+  \item if there exist exactly \msf{k > 0} program clauses of the form \msf{p \leftarrow_{\pi} E_{i}}, where \msf{i \in \left\{ 1, \ldots, k \right\}} for \msf{p} in \msf{P}, then the completed definition for \msf{p} is the expression \msf{p \leftrightarrow_{\pi} E}, where \msf{E = E_1 \bigvee_{\pi} \cdots \bigvee_{\pi} E_k}.
+  \item if there are no program clauses for \msf{p} in \msf{P}, then the completed definition for \msf{p} is the expression \msf{p \leftrightarrow_{\pi} E}, where \msf{E} is of type $\pi$ and \msf{E = \lambda \widehat{X}.false}.
+\end{itemize}
 \end{definition}
 
 \chapter{THE PROOF PROCEDURE}
