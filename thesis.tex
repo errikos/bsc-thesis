@@ -261,6 +261,17 @@ A body expression of the form \msf{\left( E_1 \approx E_2 \right)} will be calle
 
 Let \msf{\widehat{E}} and \msf{\widehat{E}'}, where all \msf{E_i}, \msf{E_i'} are of type $\iota$. We will write \msf{\left( \widehat{E} \approx \widehat{E}' \right)} to denote the expression \msf{\left( E_1 \approx E_1' \right) \land \dots \land \left( E_n \approx E_n' \right)}; if \msf{n = 0}, then the conjunction is the constant \msf{true}.
 
+\begin{definition}{\emph{Clausal expressions}}
+
+The set of clausal expressions of \hcn{} is defined as follows:
+\begin{enumerate}
+  \item If \msf{p} is a predicate constant of type $\pi$ and \msf{E} is a closed body expression of type $\pi$, then \msf{p \leftarrow_{\pi} E} is a clausal expression of \hcn{}, also called a \emph{program clause}.
+  \item if \msf{E} is a body expression of type $o$ and each free variable in \msf{E} is of type $\mu$ (existential), then \msf{false \leftarrow_{o} E} (or \msf{\leftarrow_{o} E}, or just \msf{\leftarrow E} is a clausal expression of \hcn{}, also called a \emph{goal clause}.
+  \item If \msf{p} is a predicate constant of type $\pi$ and \msf{E} is a closed body expression of type $\pi$, then \msf{p \leftrightarrow_{\pi} E} is a clausal expression of \hcn{}, also called a \emph{completion expression}.
+\end{enumerate}
+
+All clausal expressions of \hcn{} have type $o$.
+\end{definition}
 
 \chapter{THE PROOF PROCEDURE}
 
