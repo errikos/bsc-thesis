@@ -231,10 +231,31 @@ The alphabet of \hcn{} consists of:
         \end{enumerate}
   \item The \emph{abstractor} $\lambda$ and the \emph{parentheses} ``\msf{(}'' and ``\msf{)}''.
 \end{enumerate}
+
+We define the set consisting of the predicate variables and the individual variables of \hcn{}, as the \emph{argument variables} of \hcn{}.
+\end{definition}
+
+\begin{definition}{\emph{Body expressions}}
+
+The set of body expressions of \hcn{} is recursively defined as follows:
+\begin{enumerate}
+  \item
+  \begin{enumerate}
+    \item Every \emph{predicate variable} (respectively, \emph{predicate constant}) of type $\pi$ is a body expression of type $\pi$;
+    \item Every \emph{individual variable} (respectively, \emph{individual constant}) of type $\iota$ is a body expression of type $\iota$;
+    \item The \emph{propositional constants} \msf{false} and \msf{true} are body expressions of type $o$.
+  \end{enumerate}
+  \item If \msf{f} is an \emph{\msf{n}-ary function symbol} and \msf{E_1, \ldots, E_n} are \emph{body expressions} of type $\iota$, then \msf{\left( f ~~ E_1 ~ \cdots ~ E_n \right)} is a body expression of type $\iota$.
+  \item If \msf{E_1} is a \emph{body expression} of type $\rho \rightarrow \pi$ and \msf{E_2} is a \emph{body expression} of type $\rho$, then \msf{\left( E_1 ~ E_2 \right)} is a body expression of type $\pi$.
+  \item If \msf{V} is an \emph{argument variable} of type $\rho$ and \msf{E} is a \emph{body expression} of type $\pi$, then \msf{\left( \lambda V. E \right)} is a body expression of type $\rho \rightarrow \pi$.
+  \item If \msf{E_1, E_2} are \emph{body expressions} of type $\pi$, then \msf{\left( E_1 \bigwedge_{\pi} E_2 \right)} and \msf{\left( E_1 \bigvee_{\pi} E_2 \right)} are body expressions of type $\pi$.
+  \item If \msf{E_1, E_2} are \emph{body expressions} of type $\iota$, then \msf{\left( E_1 \approx E_2 \right)} is a body expression of type $o$.
+  \item If \msf{E} is a \emph{body expression} of type $o$ and \msf{V} is an \emph{existential variable} of type $\mu$, then \msf{\left( \exists_{\mu} V ~ E \right)} is a body expression of type $o$.
+  \item If \msf{E} is a \emph{body expression} of type $o$, then \msf{\left( \sim E \right)} is a body expression of type $o$.
+\end{enumerate}
 \end{definition}
 
 \section{Notations}
-
 In the following, we will write \msf{\widehat{A}} to denote a (possibly empty) sequence \msf{\langle A_1, \ldots, A_n \rangle}.
 
 A body expression of the form \msf{\left( E_1 \approx E_2 \right)} will be called an \emph{equality}, while a body expression of the form \msf{\sim \exists \widehat{V} \left( E_1 \approx E_2 \right)} will be called an \emph{inequality}; in the latter case \msf{\widehat{V}} may be empty, in which case the inequality is of the form \msf{\sim \left( E_1 \approx E_2 \right)}.
