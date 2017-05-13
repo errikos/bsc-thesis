@@ -51,6 +51,7 @@
 %%%%%%%%%%%%%%%%%%%%%% User-specific configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newcommand{\h}{$\mathcal{H}$}
 \newcommand{\hcn}{$\mathcal{H}_\mathsf{cn}$}
 \newcommand{\msf}[1]{$\mathsf{#1}$}
 
@@ -162,7 +163,10 @@
 
 \chapter{INTRODUCTION}
 
-This is the introduction...
+\section{Extensional Higher-Order Logic Programming}
+
+\section{Constructive Negation}
+
 
 \chapter{THE HIGHER-ORDER LANGUAGE \hcn}
 
@@ -297,10 +301,12 @@ Let \msf{P} be a program. Then, the \emph{completion} \msf{comp(P)} of \msf{P} i
 \end{definition}
 
 \chapter{THE PROOF PROCEDURE}
+The proof procedure of \hcn{} incorporates and adapts the constructive negation rules, as described by David Chan in \cite{DBLP:conf/slp/Chan89}, to the higher-order case.
 
-\section{Single step derivation}
+\section{The procedure}
+In this section, we define the proof procedure, as proposed by Charalambidis et al. in \cite{DBLP:conf/kr/CharalambidisR14}. The procedure consists of three definitions. Definition \ref{singlestepderivation}...
 
-\begin{definition}{\emph{Single-step derivation}}
+\begin{definition}{\emph{Single-step derivation}}\label{singlestepderivation}
 
 Let \msf{P} be a program and let \msf{G_{k}} and \msf{G_{k+1}} be goal clauses.
 
@@ -348,8 +354,6 @@ We say that \msf{G_{k+1}} \emph{is derived in one step} from \msf{G_k} using \ms
 
 \end{definition}
 
-
-\section{Reduction}
 \begin{definition}{\emph{Reduction}}
 
 Let \msf{P} be a program and \msf{E}, \msf{E'} be body expressions of type $o$.
@@ -365,7 +369,6 @@ We say that \msf{E} is reduced (with respect to \msf{P}) to \msf{E'} (denoted as
 
 \end{definition}
 
-\section{Negative Reduction}
 \begin{definition}{\emph{Negative reduction}}
 
 Let \msf{P} be a program and \msf{B}, \msf{B'} be body expressions where \msf{B = \sim \exists \widehat{U} \left( A_1 \land \dots \land A_n \right)} and each \msf{A_i} is a body expression except for conjunction.
@@ -442,6 +445,12 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
 \end{enumerate}
 
 \end{definition}
+
+\section{The problem}
+
+\chapter{THE PROPOSED APPROACH}
+
+\chapter{CONCLUSION AND FUTURE WORK}
 
 \backmatter
 
