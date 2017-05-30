@@ -574,12 +574,12 @@ publications}\gdef\@lopfileinternal{#1}}
     \makeatother
 
     \pagestyle{empty}
-    \listoffigures
+    % \listoffigures
     \cleardoublepage
     \endgroup
 
     % list of tables
-    \listoftables
+    % \listoftables
     \thispagestyle{empty}
 
     % preface page (english version only, OPTIONAL)
