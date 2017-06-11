@@ -444,12 +444,14 @@ Let \msf{P} be a program. Then, the \emph{completion} \msf{comp(P)} of \msf{P} i
 \end{definition}
 
 \chapter{THE PROOF PROCEDURE}
+\label{chap:proof}
 The proof procedure of \hcn{} incorporates and adapts the constructive negation rules, as described by David Chan in \cite{DBLP:conf/slp/Chan89}, to the higher-order case.
 
 \section{The procedure}
-In this section, we define the proof procedure, as proposed by Charalambidis et al. in \cite{DBLP:conf/kr/CharalambidisR14}. The procedure consists of three definitions. Definition \ref{singlestepderivation}...
+In this section, we define the proof procedure, as proposed by Charalambidis et al. in \cite{DBLP:conf/kr/CharalambidisR14}. The procedure consists of three definitions. We explain each definition in its own section.
 
-\begin{definition}{\emph{Single-step derivation}}\label{singlestepderivation}
+\begin{definition}{\emph{Single-step derivation}}
+\label{def:singlestepderivation}
 
 Let \msf{P} be a program and let \msf{G_{k}} and \msf{G_{k+1}} be goal clauses.
 
@@ -495,9 +497,11 @@ We say that \msf{G_{k+1}} \emph{is derived in one step} from \msf{G_k} using \ms
         using \msf{\theta = \left\{ R \middle/ \left( \lambda \widehat{X} . ~ \exists \widehat{V} \left( \widehat{X} \approx \widehat{E} \right) \bigvee_{\kappa} R' \right) \right\}}.
 \end{enumerate}
 
+Definition \ref{def:singlestepderivation} defines the single-step derivation of goals and is actually an extension of single-step derivation of classical logic programming to support higher-order terms and constructive negation. This definition is the most general of the three, in the sense that it delegates the handling of more ``special'' or complex subgoals to the other two definitions.
 \end{definition}
 
 \begin{definition}{\emph{Reduction}}
+\label{def:reduction}
 
 Let \msf{P} be a program and \msf{E}, \msf{E'} be body expressions of type $o$.
 
@@ -510,9 +514,11 @@ We say that \msf{E} is reduced (with respect to \msf{P}) to \msf{E'} (denoted as
   \item \msf{\left( E_1 \bigwedge_{\pi} E_2 \right) \widehat{A} \rightsquigarrow \left( E_1 ~ \widehat{A} \right) \land_{o} \left( E_2 ~ \widehat{A}  \right)}.
 \end{enumerate}
 
+Definition \ref{def:reduction} is the simplest definition among the three. It corresponds to simple operations on a subgoal, in order to advance the its evaluation. More specifically, definition \ref{def:reduction}.1 replaces a predicate constant by its defined expressions within the program. Definition \ref{def:reduction}.2 corresponds to a $\beta$-reduction for a lambda expression, whereas definitions \ref{def:reduction}.3 and \ref{def:reduction}.4 ``transform'' the generalised disjunction and conjunction predicate constants $\bigvee_{\pi}$ and $\bigwedge_{\pi}$ to the normal boolean operators $\lor$ and $\land$, respectively.
 \end{definition}
 
 \begin{definition}{\emph{Negative reduction}}
+\label{def:negreduction}
 
 Let \msf{P} be a program and \msf{B}, \msf{B'} be body expressions where \msf{B = \sim \exists \widehat{U} \left( A_1 \land \dots \land A_n \right)} and each \msf{A_i} is a body expression except for conjunction.
 
@@ -587,13 +593,39 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
         \end{enumerate}
 \end{enumerate}
 
+Definition \ref{def:negreduction} is the most complex of the three definitions that make up the proof procedure. The reason is that it handles negative subgoals. In order to achieve that, it has to employ the constructive negation paradigm as defined by Chan \cite{DBLP:conf/slp/Chan89}, however extended in order to support higher order terms. These higher-order terms are in essence set variables, therefore the procedure in our case shall not only return ``equality'' relations, but also ``belongs to'' relations.
 \end{definition}
 
-\section{The problem}
+\section{Extending constructive negation for \h{}}
+Recall that predicates in \h{} represent sets. In \h{}, a set is constructed via the $\bigvee_{\pi}$ operator, (of type $\pi \rightarrow \pi \rightarrow \pi$) which is a very primitive version of the set union operator ($\cup$).
+
+\begin{example} Lets assume that a predicate \msf{P} in a program is true for the atoms \msf{a}, \msf{b} and \msf{c}. Therefore, it represents the following set that contains (at least) \msf{a}, \msf{b} and \msf{c}:
+\begin{center}
+  \msf{P = \left\{ a, b, c \right\} \cup L}
+\end{center}
+
+The above bracket-notion is just a short (or pretty-print) version of the following:
+\begin{center}
+  \msf{P = a ~\bigvee_{\pi}~ \big( b ~\bigvee_{\pi}~ \big( c ~\bigvee_{\pi}~ L \big) \big)}
+\end{center}
+
+\end{example}
+
+In order to extend the constructive negation rule for the higher-order logic programming language \h{}, we have to keep in mind that we are also dealing with higher-order (set) variables like in the example above.
+
+Recall equation \ref{eq:cneg}, which outlines the equality theory rule that is applied in constructive negation. This rule works well when there are only first order terms in the literals selected.
+
+When considering the higher-order terms of \h{}, then a more sophisticated version of that formula is required.
+
+The above described behaviour is implemented by rules 7, 10 and 11 of definition \ref{def:negreduction}.
+
+\section{Identifying the Problem}
 
 \chapter{THE PROPOSED APPROACH}
+\label{chap:approach}
 
 \chapter{CONCLUSION AND FUTURE WORK}
+\label{chap:conclusion}
 
 \backmatter
 
