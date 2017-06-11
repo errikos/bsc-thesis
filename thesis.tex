@@ -192,13 +192,126 @@
 \section{Thesis Structure}
 The rest of this thesis is organised as follows. Chapter \ref{chap:background} provides some background on the essential terms of negation as failure, constructive negation and higher-order logic programming. In chapter \ref{chap:hcn} the higher-order logic programming language \hcn{} is defined. In chapter \ref{chap:proof} the rules that make up the proof procedure of \hcn{} are outlined and the problem that makes the implementation challenging is identified and presented. Chapter \ref{chap:approach} shows the proposed approach to overcome the problem and outlines possible limitations. Finally, chapter \ref{chap:conclusion} concludes the thesis and outlines the various possibilities for future work.
 
+\chapter{BACKGROUND}
+\label{chap:background}
 
-\section{Extensional Higher-Order Logic Programming}
+\section{Negation as Failure}
+Negation as failure is the most widely used approach for handling negation in logic programming systems. The simplicity in its implementation as well as its efficiency make it a really attractive option to employ.
+
+These two pros of negation as failure originate from the simplicity of its operational semantics: \emph{If P cannot be proved based on the facts of the knowledge base (of the program), then assume that P is false}. The previous statement is also know as the \emph{closed world assumption rule}. This is an extremely simple approach that greatly simplifies the handling of negative literals. Given a negative literal, e.g. \msf{not(p)}, all one has to do is run the positive version of it, i.e. \msf{p}. If it succeeds, then fail. If it fails, then succeed.
+
+This behaviour can be easily demonstrated if we consider the usual negation as failure implementation in Prolog, using cut and fail:
+
+\begin{lstlisting}[language=Prolog,frame=single]
+  not(Goal) :- call(Goal), !, fail.
+  not(Goal).
+\end{lstlisting}
+
+A closer look at the above implementation immediately reveals the basic restriction of negation as failure. Note that nowhere in the above description variable bindings are discussed. This is because negation as failure can only be used as a test against program facts and cannot produce any variable bindings. This means that it can only handle ground literals (that is, literals that only contain ground atoms or, put otherwise, literals containing no variables).
+
+\begin{example} Consider the following logic program:
+\begin{lstlisting}[language=Prolog,frame=single]
+  p(X) :- not(q(X)).
+  q(X) :- not(r(X)).
+
+  r(1).
+  r(2).
+\end{lstlisting}
+and the query:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- p(X).
+\end{lstlisting}
+Negation as failure will indeed confirm that \msf{p(X)} is true by answering yes, but it will be unable to provide any bindings for \msf{X}. This is due to the \texttt{fail} in the implementation, which causes any bindings that may have been produced by the \texttt{call} meta-predicate call to be lost.
+\end{example}
+
+Another problem with negation as failure is that its implementation is unsound.
+\begin{example} Consider the following logic program:
+\begin{lstlisting}[language=Prolog,frame=single]
+  p(X) :- not(q(X)), r(X).
+
+  q(a).
+  r(b).
+\end{lstlisting}
+Considering the semantics of negation as failure, the predicate \msf{p(X)} seems to succeed for \msf{X = b} and to fail for \msf{X = a}. Indeed, that is the case:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- p(a).
+  no
+
+  ?- p(b).
+  yes
+\end{lstlisting}
+Therefore, if a query that asks for all \msf{X}, such that \msf{p(X)} is true is posed, the answer \msf{X = b} is expected. However, this is not the case because, as already stated, negation as failure cannot handle non-ground negative literals in a sound manner:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- p(X).
+  no
+\end{lstlisting}
+\end{example}
+
 
 \section{Constructive Negation}
+The concept of Constructive Negation was first introduced by Chan \cite{DBLP:conf/iclp/Chan88} as an alternative to negation as failure. Constructive negation promises the handling of negative non-ground literals, by returning not only variable equalities (bindings) but also inequalities.
+
+The idea behind constructive negation is simple: if a negated query, e.g. \msf{\lnot Q} is given, we run the positive version of it, i.e. \msf{Q}, and obtain the answers as a disjunction. Then, we return the negation of answers to \msf{Q} as a conjunction to \msf{\lnot Q}.
+
+\begin{example} Suppose that we have the following very simple knowledge base:
+\begin{lstlisting}[language=Prolog,frame=single]
+  p(a).
+  p(b).
+  p(c).
+\end{lstlisting}
+and the query:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- not(p(X)).
+\end{lstlisting}
+We first run the positive version of the query, i.e. \msf{p(X)} and obtain the answer the disjunction: \msf{X = a \lor X = b \lor X = c}. Then, we return the negated disjunction as an answer to the original query: \msf{X \ne a \land X \ne b \land X \ne c}.
+\end{example}
+
+\begin{example} Consider the following logic program:
+\begin{lstlisting}[language=Prolog,frame=single]
+  p(X) :- not(q(X)).
+
+  q(a).
+  q(b).
+\end{lstlisting}
+then, for the query \msf{p(X)} the answer will be:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- p(X).
+  X /= a, X /= b
+  yes
+\end{lstlisting}
+\end{example}
+
+In the above example, notice how inequalities can be generated at any point of the computation where a negative literal is encountered. This resembles the constraint logic programming scheme, however simpler, because the restrictions here are only inequalities (\msf{\ne}) and not e.g. \msf{\le} or \msf{\ge}.
+
+Please note that, in the above examples, the format of the final answer is simplified, in order to demonstrate the idea of constructive negation. In reality, a more complex formula is used to negate the disjunction of answers to the positive version of the negated query. Furthermore, in both examples, notice how the positive version of the negated query returns a finite number of answers. How does constructive negation handle the negation of a disjunction of infinite answers? This issue is addressed in \cite{DBLP:conf/slp/Chan89}, where the constructive negation rule is extended to support the negation of infinite answers.
+
+We will not analyse the techniques that are used in \cite{DBLP:conf/iclp/Chan88} and \cite{DBLP:conf/slp/Chan89} in order to apply the constructive negation rule in first-order logic programming. The reader is encouraged to refer to the respective texts. However, we will outline the equivalence that the constructive negation scheme makes use of, in order to negate the answers.
+
+Let the goal list be \msf{A = A_1, \ldots, A_n} and the selected literal be \msf{A_i}. Also, let \msf{A'} be the rest of the goal list except \msf{A_i}, i.e. \msf{A' = A_1, \ldots, A_{i-1}, A_{i+1}, \ldots, A_{n}}. Then, the negation formula is the following:
+
+\begin{equation}\label{eq:cneg}
+  \lnot\exists \textbf{U} \big( \mathsf{A_i} \land \mathsf{A'} \big) ~\equiv~
+  \lnot\exists \textbf{U}_\textbf{1} \mathsf{A_i} \lor \exists \textbf{U}_\textbf{1} \big( \mathsf{A_i} \land \lnot\exists \textbf{U}_\textbf{2} \mathsf{A'} \big)
+\end{equation}
+
+where \msf{\textbf{U}_\textbf{1}} are the variables in \msf{\textbf{U}} that are free in \msf{A_i} and \msf{\textbf{U}_\textbf{2}} are the variables in \msf{\textbf{U}} not in \msf{\textbf{U}_\textbf{1}}.
+
+The above formula is implied by the equality theory and is the mathematical formalisation of taking each component from the goal list \msf{A}, negating it and then recombining the components. We will later extend the above formula to apply to higher-order terms.
+
+The reason it works is twofold. First, it makes no assumption on the type of \msf{A_i}: it could be an equality, an inequality, a literal, etc. Second, it does not require all (possibly infinite) literals that make up \msf{A} to be available at the time of application. Thus, it is a somehow ``lazy'' operator in functional programming terms.
+
+\section{Extensional Higher-Order Logic Programming}
+Extensional higher-order logic programming was first proposed by Charalambidis et al. in \cite{DBLP:journals/tocl/CharalambidisHRW13} as an extension of classical, first-order logic programming. By looking at the name of this paradigm, we can see that it is made up of two terms: \emph{extensional} and \emph{higher-order}.
+
+The term \emph{higher-order} refers to the capability of applying and passing around predicates and predicate variables as parameters.
+
+The term \emph{extensional} refers to the way program predicates can be passed and used, or otherwise, to what makes up a predicate or what a predicate really is. In an extensional language, two predicates are considered to be equal (i.e. the same) if they are true for the same set of arguments. The opposite of this term is \emph{intentional} and in languages belonging to this category, predicates are more than just a set of arguments for which they are true (e.g. they are also discriminated by their name).
+
+The notions of extensional higher-order logic programming and constructive negation proved to be very compatible and, based on that observation, the \hcn{} language was created \cite{DBLP:conf/kr/CharalambidisR14}.
 
 
 \chapter{THE HIGHER-ORDER LANGUAGE \hcn}
+\label{chap:hcn}
 
 \section{Preliminaries}
 The reader is presumed to be familiar with the basic concepts and definitions of classical Logic Programming \cite{Lloyd:1987:FLP:39279}. For example, the concepts \textbf{term}, \textbf{formula}, \textbf{atom}, \textbf{(program) clause} and \textbf{goal} are defined as in classical Logic Programming, with slight extensions on their definitions where necessary.
