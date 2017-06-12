@@ -281,7 +281,7 @@ Therefore, if a query that asks for all \msf{X}, such that \msf{p(X)} is true is
 \section{Constructive Negation}
 The concept of Constructive Negation was first introduced by Chan \cite{DBLP:conf/iclp/Chan88} as an alternative to negation as failure. Constructive negation promises the handling of negative non-ground literals, by returning not only variable equalities (bindings) but also inequalities.
 
-The idea behind constructive negation is simple: if a negated query, e.g. \msf{\lnot Q} is given, we run the positive version of it, i.e. \msf{Q}, and obtain the answers as a disjunction. Then, we return the negation of answers to \msf{Q} as a conjunction to \msf{\lnot Q}.
+The idea behind constructive negation is simple: if a negated query, e.g. \msf{\lnot Q} is given, we run the positive version of it, i.e. \msf{Q}, and obtain the answers as a disjunction. Then, we return the negation of answers to \msf{Q} as an answer to \msf{\lnot Q}.
 
 \begin{example} Suppose that we have the following very simple knowledge base:
 \begin{lstlisting}[language=Prolog,frame=single]
@@ -653,8 +653,18 @@ The above described behaviour is implemented by rules 7, 10 and 11 of definition
 \chapter{THE PROPOSED APPROACH}
 \label{chap:approach}
 
+\section{Tweaking the proof procedure}
+
+\section{Why the approach works}
+
+\section{Limitations}
+
 \chapter{CONCLUSION AND FUTURE WORK}
 \label{chap:conclusion}
+
+\section{Conclusion}
+
+\section{Future work}
 
 \backmatter
 
