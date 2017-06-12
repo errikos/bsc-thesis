@@ -330,10 +330,10 @@ The above formula is implied by the equality theory and is the mathematical form
 
 To better understand why the above formula works, consider the following:
 \begin{align*}
-  \mathsf{\lnot \left( A \land B \right)} & ~\Leftrightarrow~ \mathsf{\lnot A \lor \lnot B} \\
-                                          & ~\Leftrightarrow~ \mathsf{true \land \left( \lnot A \lor \lnot B \right)} \\
-                                          & ~\Leftrightarrow~ \mathsf{\left( \lnot A \lor A \right) \land \left( \lnot A \lor \lnot B \right)} \\
-                                          & ~\Leftrightarrow~ \mathsf{\lnot A \lor \left( A \land \lnot B \right)}
+  \mathsf{\lnot \left( A \land B \right)} & ~\Leftrightarrow~ \mathsf{\lnot A \lor \lnot B} & ~ \\
+                                          & ~\Leftrightarrow~ \mathsf{true \land \left( \lnot A \lor \lnot B \right)} & \left( \mathsf{true} \land P \Leftrightarrow P \right) \\
+                                          & ~\Leftrightarrow~ \mathsf{\left( \lnot A \lor A \right) \land \left( \lnot A \lor \lnot B \right)} & \left( P \lor \lnot P \Leftrightarrow \mathsf{true} \right) \\
+                                          & ~\Leftrightarrow~ \mathsf{\lnot A \lor \left( A \land \lnot B \right)} & (\text{rev. distributive law})
 \end{align*}
 
 % The reason the above formula works is twofold. First, it makes no assumption on the type of \msf{A_i}: it could be an equality, an inequality, a literal, etc. Second, it does not require all (possibly infinite) literals that make up \msf{A} to be available at the time of application. Thus, it is a somehow ``lazy'' operator in functional programming terms.
