@@ -187,6 +187,13 @@
 \chapter{INTRODUCTION}
 \label{chap:intro}
 
+\section{Objective}
+\hcn{} is a extensional, higher-order, logic programming language with costructive negation \cite{DBLP:conf/kr/CharalambidisR14}. All the terms in the previous sentence will be explained later on. An implementation of this language has been attempted and can be found at the following GitHub repository: \url{https://github.com/acharal/hopes}.
+
+While the aforementioned implementation works fine for positive first and higher-order terms, as well as for negative first-order terms, when it comes to negative higher-order terms, it falls short to deliver the intended results.
+
+The objective of this thesis is, initially, the identification of the rules in the proof procedure of \hcn{} that are problematic and contribute to the incorrect behaviour of the implementation. Thereinafter, the various ways to fix the unwanted behaviour shall be considered and a solution to the problem shall be given.
+
 \section{Motivation}
 Some problems (i.e. predicates) can be expressed better and more elegantly via negation. Giving the programmer the ability to write such programs, makes the language a very powerful tool.
 
