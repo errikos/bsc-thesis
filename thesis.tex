@@ -206,6 +206,11 @@ Therefore, if there exists a predicate \msf{q} that is true for atoms \msf{0}, \
   ?- subset(P, q).
 \end{lstlisting}
 would return in \msf{P} all subsets of the set \msf{\left\{ 0, 1, 2 \right\}}.
+
+What makes the above program powerful, is the ability to write the first rule, which makes use of constructive negation, in order to obtain answers by negating the very simple second rule. The second rule itself is not very useful in the sense that it states something very trivial.
+
+If we try and think of how we would write the same program in a positive logic, then we would normally have to check whether every element of \msf{P} also exists in \msf{Q}. Namely, for all \msf{X \in P}, is \msf{Q(X)} true? This is considerably harder to express, because it involves iterating through \msf{P} (in some way). However, the problem is way more easy to express in a negative logic: \msf{P} is a subset of \msf{Q} if there doesn't exist any \msf{X}, such that \msf{X} is in \msf{P} but not in \msf{Q}.
+
 \end{example}
 
 \section{Thesis Structure}
