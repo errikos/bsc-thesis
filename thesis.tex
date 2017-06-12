@@ -189,6 +189,25 @@
 
 \section{Motivation}
 
+Some problems (i.e. predicates) can be expressed better and more elegantly via negation. Giving the programmer the ability to write such programs, makes the language a very powerful tool.
+
+\begin{example} Consider the following higher-order logic program:
+\begin{lstlisting}[language=Prolog,frame=single]
+  subset(P, Q) :- not(non_subset(P, Q)).
+  non_subset(P, Q) :- P(X), not(Q(X)).
+\end{lstlisting}
+The above program contains two rules to define the \emph{subset} relation:
+\begin{itemize}
+  \item \msf{P} is a subset of \msf{Q} if it does not hold that \msf{P} is not a subset of \msf{Q}.
+  \item \msf{P} is not a subset of \msf{Q} if there exists an \msf{X}, such that \msf{X} is in \msf{P}, but not in \msf{Q}.
+\end{itemize}
+Therefore, if there exists a predicate \msf{q} that is true for atoms \msf{0}, \msf{1} and \msf{2}, then the query:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- subset(P, q).
+\end{lstlisting}
+would return in \msf{P} all subsets of the set \msf{\left\{ 0, 1, 2 \right\}}.
+\end{example}
+
 \section{Thesis Structure}
 The rest of this thesis is organised as follows. Chapter \ref{chap:background} provides some background on the essential terms of negation as failure, constructive negation and higher-order logic programming. In chapter \ref{chap:hcn} the higher-order logic programming language \hcn{} is defined. In chapter \ref{chap:proof} the rules that make up the proof procedure of \hcn{} are outlined and the problem that makes the implementation challenging is identified and presented. Chapter \ref{chap:approach} shows the proposed approach to overcome the problem and outlines possible limitations. Finally, chapter \ref{chap:conclusion} concludes the thesis and outlines the various possibilities for future work.
 
