@@ -873,10 +873,12 @@ Recall that, from step 10, predicate variable \texttt{P} is bound to \texttt{($\
 \label{chap:approach}
 
 \section{Tweaking the proof procedure}
+Based on the previous chapter, it is obvious that any implementation of \hcn{} has to take measures in order to make sure that the sets that are constructed via the constructive negation rule do not contain duplicate members. Therefore, some kind of restriction has to be put in place before the proof procedure continues with the computation of the ``next'' element.
 
 \section{Why the approach works}
 
 \section{Limitations}
+While the approach outlined in this chapter fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order.
 
 \chapter{CONCLUSION AND FUTURE WORK}
 \label{chap:conclusion}
