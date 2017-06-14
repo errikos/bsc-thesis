@@ -674,7 +674,7 @@ The above described behaviour is implemented by rules 7, 10 and 11 of definition
 \section{Identifying the Problem}
 While being theoretically correct, the above approach does not work if implemented blindly. The reason is the repeated subgoal \msf{B}. As discussed earlier, when a higher-order variable \msf{R} is encountered, \msf{B} is re-added to the goal list in order to explore whether \msf{R} can contain extra elements. However, notice that \msf{B} is repeated exactly ``as is'', without any care being taken in order to restrict the new values that are to be added to \msf{R}.
 
-If we now look at this procedure from an implementation point of view, it is only logical that exactly the same computation steps will be repeated, because \msf{B} is exactly the same as before. It seems inevitable that the new goal will produce exactly the same bindings as the previous one. And this is exactly the case, which is easily demonstrable if we look at the proof procedure computation steps of an example.
+If we now look at this procedure from an implementation point of view, it is only logical that exactly the same computation steps will be repeated, because \msf{B} is exactly the same as before. It seems inevitable that the new goal will produce exactly the same bindings as the previous one. And this is actually the case, which is easily demonstrable if we look at the proof procedure computation steps of an example.
 
 \begin{example} Because program predicates represent sets, the most typical example we can investigate and which also shows off the problem pretty well, is the \texttt{subset} predicate, which was first presented in example \ref{ex:subset}.
 
