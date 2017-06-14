@@ -916,9 +916,9 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
           \item[(b)] if \msf{R \not \in \widehat{U}} and \msf{n > 1}, then
                 \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~\land \sim \exists \widehat{U}_2 ~ A' ~\land B_{1} \right)},
 
-                where \msf{B_{1} = \sim\exists \widehat{U}_{1}' \left( S^{-}\left( R \left( \widehat{E} \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+                where \msf{B_{1} = \sim\exists \widehat{U}' \left( S^{-}\left( R \left( \widehat{E}' \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
 
-                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}_{1}'} are renamed versions of variables in \msf{\widehat{U}_{1}};
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'} are renamed versions of variables in \msf{\widehat{U}};
         \end{enumerate}
   \item[10.] if \msf{A_i} is \msf{\sim \exists \widehat{V} \left( R ~ \widehat{E} \right)} and \msf{R \not\in \widehat{V}} is a predicate variable,
         then:
@@ -926,21 +926,23 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
           \item[(b)] if \msf{R \not\in \widehat{U}} and \msf{n > 1},
                 then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~ \land \sim \exists \widehat{U}_2 ~ A' \land B_{1} \right)},
 
-                where \msf{B_{1} = \sim\exists \widehat{U}_{1}' \left( S^{-}\left( R \left( \widehat{E} \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+                where \msf{B_{1} = \sim\exists \widehat{U}' \left( S^{-}\left( R \left( \widehat{E}' \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
 
-                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}_{1}'} are renamed versions of variables in \msf{\widehat{U}_{1}};
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'} are renamed versions of variables in \msf{\widehat{U}};
         \end{enumerate}
   \item[11.] if \msf{A_i} is \msf{\sim \exists \widehat{V} \sim \left( R ~ \widehat{E} \right)} and \msf{R} is a predicate variable and \msf{R \not\in \widehat{V}}, then:
         \begin{enumerate}
           \item[(b)] if \msf{R \not\in \widehat{U}} and \msf{n > 1},
                 then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~ \land \sim \exists \widehat{U}_2 ~ A' \land B_{1} \right)},
 
-                where \msf{B_{1} = \sim\exists \widehat{U}_{1}' \left( S^{-}\left( R \left( \widehat{E} \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+                where \msf{B_{1} = \sim\exists \widehat{U}' \left( S^{-}\left( R \left( \widehat{E}' \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
 
-                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}_{1}'} are renamed versions of variables in \msf{\widehat{U}_{1}};
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'} are renamed versions of variables in \msf{\widehat{U}};
         \end{enumerate}
 \end{enumerate}
 \end{definition}
+
+In order to introduce a restriction among the variables in the selected expression \msf{A_i} and the ones in the repeated expression \msf{B}, the latter needed to be within the scope of the quantification of \msf{\widehat{U}_1}. That's why \msf{B} was moved inside the aforementioned scope, in conjunction with the other subgoals and renamed to \msf{B_1} for the needs of the definition.
 
 
 \section{Why the approach works}
