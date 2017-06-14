@@ -875,6 +875,24 @@ Recall that, from step 10, predicate variable \texttt{P} is bound to \texttt{($\
 \section{Tweaking the proof procedure}
 Based on the previous chapter, it is obvious that any implementation of \hcn{} has to take measures in order to make sure that the sets that are constructed via the constructive negation rule do not contain duplicate members. Therefore, some kind of restriction has to be put in place before the proof procedure continues with the computation of the ``next'' element.
 
+This is the approach that we take (...)
+
+Before outlining the modified versions of the rules of negative reduction (definition \ref{def:negreduction}), we need to define the \emph{reduced substitution} operator.
+
+\begin{definition}{\emph{Reduced substitution}}
+
+Let \msf{L} be a lambda expression and \msf{P} be a predicate variable of type $\kappa$.
+
+The reduced substitution operator \msf{S^{-}} is defined as follows:
+\begin{enumerate}
+  \item \msf{S^{-}\left( L \bigvee_{\kappa} P \right) = P };
+  \item \msf{S^{-}\left( L \bigwedge_{\kappa} P \right) = P }.
+\end{enumerate}
+
+Namely, given an expression that matches one of the above, \msf{S^{-}} drops the lambda expression \msf{L} and only returns the predicate variable \msf{P}.
+
+\end{definition}
+
 \section{Why the approach works}
 
 \section{Limitations}
