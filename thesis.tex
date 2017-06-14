@@ -878,7 +878,19 @@ Based on the previous chapter, it is obvious that any implementation of \hcn{} h
 \section{Why the approach works}
 
 \section{Limitations}
-While the approach outlined in this chapter fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order.
+While the approach outlined in this chapter fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
+
+To understand why this problem exists, consider again the subset example (\ref{ex:subset}). Every time that the negation rule is applied on the expression that extends \msf{P}, normally the definition of predicate \msf{q} is inserted into the computation. The completed definition of \msf{q} is always the same and the implementation has to choose one of the possible values (in example \ref{ex:subset} the possible values are \msf{0}, \msf{1} or \msf{2}). Our modified rule inserts inequalities in order to restrict the new value to be different from any previous value.
+
+This is however not enough, because when the computation backtracks, the inequalities are lost (and are meant to be lost, so that new subsets can be computed). The computation finds itself in the following situation:
+
+\begin{itemize}
+\item After \msf{P = \left\{ 0, 1, 2 \right\}} having been computed, there is not other expression with which \msf{P} can be extended and there is no other choice in place of third member (\msf{2}), so the implementation backtracks in order to find an alternative choice in place of the second member (\msf{1}).
+\item Indeed, since there is only one restriction for the second member, namely to be different that \msf{0}, there is one alternative: \msf{2}. Therefore, the following set is computed: \msf{P = \left\{ 0, 2 \right\}}.
+\item As the computation continues, it will attempt to find whether there is a third expression (from the completed definition of \msf{q}) that can be ``put'' into \msf{P}, that also satisfies the restrictions of it being different than \msf{0} and \msf{2}. There is such an expression: \msf{1} is different than \msf{0} and \msf{2}, so it is chosen and the following answer is computed: \msf{P = \left\{ 0, 2, 1 \right\}}.
+\end{itemize}
+
+Clearly, another approach is needed in order to avoid the above behaviour. One idea would be, instead of inequalities, to introduce ``greater than'' restrictions for the members of \msf{P}. However, this would require that the completed expression of \msf{q} to be ``sorted''. When talking about numbers, sorting is obvious. However, in the general case that is not true. Furthermore, it is not straight-forward how one would sort the completed expression. Finally, the performance implications on the implementation should also be considered.
 
 \chapter{CONCLUSION AND FUTURE WORK}
 \label{chap:conclusion}
