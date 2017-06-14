@@ -676,7 +676,9 @@ While being theoretically correct, the above approach does not work if implement
 
 If we now look at this procedure from an implementation point of view, it is only logical that exactly the same computation steps will be repeated, because \msf{B} is exactly the same as before. It seems inevitable that the new goal will produce exactly the same bindings as the previous one. And this is actually the case, which is easily demonstrable if we look at the proof procedure computation steps of an example.
 
-\begin{example} Because program predicates represent sets, the most typical example we can investigate and which also shows off the problem pretty well, is the \texttt{subset} predicate, which was first presented in example \ref{ex:subset}.
+\begin{example}
+\label{ex:subsettrace}
+Because program predicates represent sets, the most typical example we can investigate and which also shows off the problem pretty well, is the \texttt{subset} predicate, which was first presented in example \ref{ex:subset}.
 
 This time we make sure that our program also contains some facts, so that we can run \texttt{subset} against the facts' predicate. So, consider the following higher-order logic program:
 \begin{lstlisting}[language=Prolog,frame=single]
@@ -875,40 +877,88 @@ Recall that, from step 10, predicate variable \texttt{P} is bound to \texttt{($\
 \section{Tweaking the proof procedure}
 Based on the previous chapter, it is obvious that any implementation of \hcn{} has to take measures in order to make sure that the sets that are constructed via the constructive negation rule do not contain duplicate members. Therefore, some kind of restriction has to be put in place before the proof procedure continues with the computation of the ``next'' element.
 
-This is the approach that we take (...)
+This is the approach that we take. We introduce restrictions in the format of inequalities, when the constructive negation rule is applied. These inequalities have to be introduced in such a way, that will cause the computation to fail when an expression is to be ``inserted'' for the second time in a set and they will allow it to proceed otherwise.
 
-Before outlining the modified versions of the rules of negative reduction (definition \ref{def:negreduction}), we need to define the \emph{reduced substitution} operator.
+Based on the above description, an obvious observation can be made. As the number of elements in a set increases, so does the number of the restrictive inequalities. This is normal, as we need an inequality per element currently in the set.
 
-\begin{definition}{\emph{Reduced substitution}}
+In this section we will define the modified proof procedure. In the next section we will present how and explain why the proposed approach works. Before outlining the modified versions of the rules of negative reduction (definition \ref{def:negreduction}), we need to define the \emph{trimmed substitution} operator.
+
+\begin{definition}{\emph{Trimmed substitution}}
 
 Let \msf{L} be a lambda expression and \msf{P} be a predicate variable of type $\kappa$.
 
-The reduced substitution operator \msf{S^{-}} is defined as follows:
+The trimmed substitution operator \msf{S^{-}} is defined as follows:
 \begin{enumerate}
   \item \msf{S^{-}\left( L \bigvee_{\kappa} P \right) = P };
   \item \msf{S^{-}\left( L \bigwedge_{\kappa} P \right) = P }.
 \end{enumerate}
 
 Namely, given an expression that matches one of the above, \msf{S^{-}} drops the lambda expression \msf{L} and only returns the predicate variable \msf{P}.
-
 \end{definition}
+
+In the following, we will write \msf{\left( \widehat{E} \approx_{\lor} \widehat{E}' \right)} to denote the expression \msf{ \left( E_{1} \approx E_{1}' \right) \lor \dots \lor \left( E_{n} \approx E_{n}' \right)}; if \msf{n=0}, then the disjunction is the constant \msf{false}.
+
+We can now give the modified negative reduction definition. Notice that we only need to tweak the rules that correspond to the constructive negation application for higher-order expressions, namely rules 7 (b), 10 (b) and 11 (b) of definition \ref{def:negreduction}.
+
+\begin{definition}{\emph{Negative reduction (tweaked)}}
+\label{def:negreduction_new}
+
+Let \msf{P} be a program and \msf{B}, \msf{B'} be body expressions where \msf{B = \sim \exists \widehat{U} \left( A_1 \land \dots \land A_n \right)} and each \msf{A_i} is a body expression except for conjunction.
+
+Let \msf{A_i} be the selected expression and \msf{A' = A_1 \land \dots \land A_{i-1} \land A_{i+1} \land \dots \land A_n}.
+
+% Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the following conditions applies:
+Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the conditions of definition \ref{def:negreduction}, overriden by the following rules where indicated, applies:
+\clearpage
+\begin{enumerate}
+  \item[7.] if \msf{A_i} is \msf{\left( R ~ \widehat{E} \right)} and \msf{R} is a predicate variable, then:
+        \begin{enumerate}
+          \item[(b)] if \msf{R \not \in \widehat{U}} and \msf{n > 1}, then
+                \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~\land \sim \exists \widehat{U}_2 ~ A' ~\land B_{1} \right)},
+
+                where \msf{B_{1} = \sim\exists \widehat{U}_{1}' \left( S^{-}\left( R \left( \widehat{E} \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}_{1}'} are renamed versions of variables in \msf{\widehat{U}_{1}};
+        \end{enumerate}
+  \item[10.] if \msf{A_i} is \msf{\sim \exists \widehat{V} \left( R ~ \widehat{E} \right)} and \msf{R \not\in \widehat{V}} is a predicate variable,
+        then:
+        \begin{enumerate}
+          \item[(b)] if \msf{R \not\in \widehat{U}} and \msf{n > 1},
+                then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~ \land \sim \exists \widehat{U}_2 ~ A' \land B_{1} \right)},
+
+                where \msf{B_{1} = \sim\exists \widehat{U}_{1}' \left( S^{-}\left( R \left( \widehat{E} \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}_{1}'} are renamed versions of variables in \msf{\widehat{U}_{1}};
+        \end{enumerate}
+  \item[11.] if \msf{A_i} is \msf{\sim \exists \widehat{V} \sim \left( R ~ \widehat{E} \right)} and \msf{R} is a predicate variable and \msf{R \not\in \widehat{V}}, then:
+        \begin{enumerate}
+          \item[(b)] if \msf{R \not\in \widehat{U}} and \msf{n > 1},
+                then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~ \land \sim \exists \widehat{U}_2 ~ A' \land B_{1} \right)},
+
+                where \msf{B_{1} = \sim\exists \widehat{U}_{1}' \left( S^{-}\left( R \left( \widehat{E} \right) \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}_{1}'} are renamed versions of variables in \msf{\widehat{U}_{1}};
+        \end{enumerate}
+\end{enumerate}
+\end{definition}
+
 
 \section{Why the approach works}
 
 \section{Limitations}
 While the approach outlined in this chapter fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
 
-To understand why this problem exists, consider again the subset example (\ref{ex:subset}). Every time that the negation rule is applied on the expression that extends \msf{P}, normally the definition of predicate \msf{q} is inserted into the computation. The completed definition of \msf{q} is always the same and the implementation has to choose one of the possible values (in example \ref{ex:subset} the possible values are \msf{0}, \msf{1} or \msf{2}). Our modified rule inserts inequalities in order to restrict the new value to be different from any previous value.
+To understand why this problem exists, consider again the \texttt{subset} trace (example \ref{ex:subsettrace}). Every time that the negation rule is applied on the expression that extends \msf{P}, normally the definition of predicate \msf{q} is inserted into the computation. The completed definition of \msf{q} is always the same and the implementation has to choose one of the possible values (in example \ref{ex:subsettrace} the possible values are \msf{0}, \msf{1} or \msf{2}). Our modified rule inserts inequalities in order to restrict the new value to be different from any previous value.
 
 This is however not enough, because when the computation backtracks, the inequalities are lost (and are meant to be lost, so that new subsets can be computed). The computation finds itself in the following situation:
 
 \begin{itemize}
-\item After \msf{P = \left\{ 0, 1, 2 \right\}} having been computed, there is not other expression with which \msf{P} can be extended and there is no other choice in place of third member (\msf{2}), so the implementation backtracks in order to find an alternative choice in place of the second member (\msf{1}).
-\item Indeed, since there is only one restriction for the second member, namely to be different that \msf{0}, there is one alternative: \msf{2}. Therefore, the following set is computed: \msf{P = \left\{ 0, 2 \right\}}.
+\item After \msf{P = \left\{ 0, 1, 2 \right\}} has been computed, there is no other expression with which \msf{P} can be extended and there is no other choice in place of the third member (\msf{2}), therefore the implementation backtracks in order to find an alternative choice in place of the second member (\msf{1}).
+\item Indeed, since there is only one restriction for the second member, namely to be different that \msf{0}, there is one alternative expression: \msf{2}. Therefore, the following set is computed: \msf{P = \left\{ 0, 2 \right\}}.
 \item As the computation continues, it will attempt to find whether there is a third expression (from the completed definition of \msf{q}) that can be ``put'' into \msf{P}, that also satisfies the restrictions of it being different than \msf{0} and \msf{2}. There is such an expression: \msf{1} is different than \msf{0} and \msf{2}, so it is chosen and the following answer is computed: \msf{P = \left\{ 0, 2, 1 \right\}}.
 \end{itemize}
 
-Clearly, another approach is needed in order to avoid the above behaviour. One idea would be, instead of inequalities, to introduce ``greater than'' restrictions for the members of \msf{P}. However, this would require that the completed expression of \msf{q} to be ``sorted''. When talking about numbers, sorting is obvious. However, in the general case that is not true. Furthermore, it is not straight-forward how one would sort the completed expression, as well as how sorting would affect the performance of the implementation.
+Clearly, another approach is needed in order to avoid the above behaviour. One idea would be, instead of inequalities, to introduce ``greater than'' restrictions for the members of \msf{P}. However, for a complete set of answers to be computed, this would require the completed expression of \msf{q} to be ``sorted''. When talking about numbers, sorting is obvious. However, in the general case that is not true. Furthermore, it is not straight-forward how one would sort the completed expression, as well as how sorting would affect the performance of the implementation.
 
 \chapter{CONCLUSION AND FUTURE WORK}
 \label{chap:conclusion}
