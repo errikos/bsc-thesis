@@ -678,7 +678,7 @@ If we now look at this procedure from an implementation point of view, it is onl
 
 \begin{example} Because program predicates represent sets, the most typical example we can investigate and which also shows off the problem pretty well, is the \texttt{subset} predicate, which was first presented in example \ref{ex:subset}.
 
-This time we make sure that our program also contains some facts, so that we can run \texttt{subset} against the facts' predicate. So, consider the following logic program:
+This time we make sure that our program also contains some facts, so that we can run \texttt{subset} against the facts' predicate. So, consider the following higher-order logic program:
 \begin{lstlisting}[language=Prolog,frame=single]
   subset(P, Q) :- not(non_subset(P, Q)).
   non_subset(P, Q) :- P(X), not(Q(X)).
@@ -691,9 +691,9 @@ and the query:
 \begin{lstlisting}[language=Prolog,frame=single]
   ?- subset(P, q).
 \end{lstlisting}
-which asks for all subsets of \msf{q}. Since \msf{q} represents the set \msf{\left\{ 0, 1, 2 \right\}}, normally, 8 answers are expected and their order does not matter. Let us see what happens if we run the query by hand, highlighting the rules of the proof procedure that are applied at each step. In each step, we will show the pending goal list, as well as the unifications that have been produced up to that point of the computation.
+which asks for all subsets of \msf{q}. Since \msf{q} represents the set \msf{\left\{ 0, 1, 2 \right\}}, normally, 8 answers are expected and their order does not matter. Let us see what happens if we run the query by hand, highlighting the rules of the proof procedure that are applied at each step. In each step, we will show the pending goal list, as well as the unifications that are produced at that point of the computation.
 
-The steps shown next are the steps that the current implementation follows, when given the above program and query. Please note that a left to right derivation order, just like in PROLOG, is followed.
+The steps shown next are the steps that the current implementation follows, when given the above program and query. Please note that a left to right derivation order, just like in PROLOG, is followed. Also note that, following PROLOG notation, a comma (\texttt{,}) represents a logical AND, while a semicolon (\texttt{;}) represents a logical OR.
 
 \begin{enumerate}[\bfseries Step 1:]
 \item The first step is just the expansion of the \texttt{subset} query:
@@ -727,7 +727,7 @@ Notice that in this step that, while variable \texttt{X} is renamed to \texttt{V
   $\sim$($\exists$V4 P(V4));
   ($\exists$V4 P(V4), $\sim$($\sim$q(V4))), $\sim$($\exists$V4 P(V4), $\sim$q(V4)) ?
 \end{lstlisting}
-The above is an application of the extended constructive negation rule for higher-order predicate variables.
+The above is an application of the extended constructive negation rule for higher-order predicate variables, as proposed in \cite{DBLP:conf/kr/CharalambidisR14}.
 
 \item We now have two paths to follow (logical OR). Rule \ref{def:singlestepderivation}.2 is applied and, initially, the first path is followed:
 \begin{lstlisting}[language=Prolog,%
@@ -741,6 +741,7 @@ The above is an application of the extended constructive negation rule for highe
   yes
   P = { }
 \end{lstlisting}
+So far so good, the empty set is a subset every possible set.
 
 \item At this point, the implementation backtracks and the second path of step 5 is followed. Notice that in the goal list there are two mathematical contexts, as suggested by the parentheses and the variable quantifications.
 \begin{lstlisting}[language=Prolog,%
@@ -753,10 +754,10 @@ The above is an application of the extended constructive negation rule for highe
   frame=single,breaklines=false,mathescape=true]
   P(V5), $\sim$($\sim$q(V5)), $\sim$($\exists$V4 P(V4), $\sim$q(V4)) ?
 \end{lstlisting}
-Notice that the \texttt{V4} quantification is removed and a fresh variable is used.
+Notice that the \texttt{$\exists$V4} quantification is removed and a fresh variable is used.
 
 \item The selected expression is now \texttt{P(V5)}, which matches rule \ref{def:singlestepderivation}.6, where \msf{R = \texttt{P}} and \msf{\widehat{E} = \langle \texttt{V5} \rangle}.
-Therefore, substitution \msf{\theta = \left\{ \texttt{P} / \left( \lambda \texttt{X}. (\texttt{X} = \texttt{V5}) \bigvee_{\kappa} \texttt{V8} \right) \right\}} is produced and the goal list is as follows:
+Therefore, substitution \msf{\theta = \left\{ \texttt{P} / \left( \lambda \texttt{X}. (\texttt{X} = \texttt{V5}) \bigvee_{\kappa} \texttt{V8} \right) \right\}} is produced and the goal list becomes:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true]
   $\sim$($\sim$q(V5)), $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
@@ -821,7 +822,7 @@ Which after reducing the lambda expression (rule \ref{def:reduction}.2), becomes
   $\sim$($\exists$V4 V4=0, $\sim$q(V4)), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
 \end{lstlisting}
 
-And after applying the unification:
+And after applying the unification, gives:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true]
   $\sim$($\exists$V4 $\sim$q(0)), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
@@ -834,7 +835,7 @@ And after applying the unification:
   $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
 \end{lstlisting}
 
-Furthermore, we reduce the first expression of the completed expression:
+Furthermore, we reduce the first lambda expression of the completed expression:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true]
   $\sim$($\exists$V4 $\sim$(0=0), $\sim$(($\lambda$X.X=1)(0)), $\sim$(($\lambda$X.X=2)(0))),
@@ -848,14 +849,14 @@ Furthermore, we reduce the first expression of the completed expression:
   $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
 \end{lstlisting}
 
-Equivalently:
+Equivalently, after applying rule \ref{def:negreduction}.1:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true]
   $\sim$($\exists$V4 false, $\sim$(($\lambda$X.X=1)(0)), $\sim$(($\lambda$X.X=2)(0))),
   $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
 \end{lstlisting}
 
-The first negated expression is now a conjunction of expressions, the first of which is \texttt{false}, therefore the whole expression is \texttt{true}, thus the remaining goal list is:
+The first negated expression is now a conjunction of expressions, the first of which is \texttt{false}, therefore the whole expression is \texttt{true} (rule \ref{def:negreduction}.1 again), thus the remaining goal list is:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true]
   $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
