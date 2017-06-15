@@ -1016,7 +1016,7 @@ If we consider the computation tree, the above process would correspond to follo
 
   ;
 \end{tikzpicture}
-\caption{The computation tree of the current implementation}
+\caption{The (simplified) computation tree of the current implementation}
 \end{figure}
 \end{example}
 
@@ -1056,7 +1056,6 @@ Let \msf{P} be a program and \msf{B}, \msf{B'} be body expressions where \msf{B 
 
 Let \msf{A_i} be the selected expression and \msf{A' = A_1 \land \dots \land A_{i-1} \land A_{i+1} \land \dots \land A_n}.
 
-% Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the following conditions applies:
 Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the conditions of definition \ref{def:negreduction}, overriden by the following rules where indicated, applies:
 
 \begin{enumerate}
