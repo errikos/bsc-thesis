@@ -893,7 +893,7 @@ The trimmed substitution operator \msf{S^{-}} is defined as follows:
   \item \msf{S^{-}\left( L \bigwedge_{\kappa} P \right) = P }.
 \end{enumerate}
 
-Namely, given an expression that matches one of the above, \msf{S^{-}} drops the lambda expression \msf{L} and only returns the predicate variable \msf{P}.
+Namely, given an expression that matches one of the above, \msf{S^{-}} drops the lambda expression \msf{L} and only returns the predicate variable \msf{P}, i.e. it trims the expression to only contain \msf{P}.
 \end{definition}
 
 In the following, we will write \msf{\left( \widehat{E} \approx_{\lor} \widehat{E}' \right)} to denote the expression \msf{ \left( E_{1} \approx E_{1}' \right) \lor \dots \lor \left( E_{n} \approx E_{n}' \right)}; if \msf{n=0}, then the disjunction is the constant \msf{false}.
@@ -909,7 +909,7 @@ Let \msf{A_i} be the selected expression and \msf{A' = A_1 \land \dots \land A_{
 
 % Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the following conditions applies:
 Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the conditions of definition \ref{def:negreduction}, overriden by the following rules where indicated, applies:
-\clearpage
+
 \begin{enumerate}
   \item[7.] if \msf{A_i} is \msf{\left( R ~ \widehat{E} \right)} and \msf{R} is a predicate variable, then:
         \begin{enumerate}
@@ -948,6 +948,7 @@ In order to introduce a restriction among the variables in the selected expressi
 \section{Why the approach works}
 
 \section{Limitations}
+\label{section:limitations}
 While the approach outlined in this chapter fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
 
 To understand why this problem exists, consider again the \texttt{subset} trace (example \ref{ex:subsettrace}). Every time that the negation rule is applied on the expression that extends \msf{P}, normally the definition of predicate \msf{q} is inserted into the computation. The completed definition of \msf{q} is always the same and the implementation has to choose one of the possible values (in example \ref{ex:subsettrace} the possible values are \msf{0}, \msf{1} or \msf{2}). Our modified rule inserts inequalities in order to restrict the new value to be different from any previous value.
@@ -966,8 +967,14 @@ Clearly, another approach is needed in order to avoid the above behaviour. One i
 \label{chap:conclusion}
 
 \section{Conclusion}
+We modified the proof procedure of \hcn{} to make it more implementation-oriented. The new proof procedure avoids the non-termination problem that the previous one encountered when it had to deal with negated higher-order expressions.
+
+We did so by introducing expressions that restrict the new elements of the respective set when applying the constructive negation rule to higher-order predicate expressions. These expressions are essentially inequalities that emulate an $\in$ operator for the set constructed so far.
 
 \section{Future work}
+While the modified proof procedure allows the implementation to find the correct paths in the computation tree, there is still room for improvement. One issue that has to be tackled is that the same answer may be returned multiple times, with its terms re-ordered (see ``Limitations'' -- section \ref{section:limitations}). This may require extra restrictions placed in the proof procedure rules, as well as a different order of evaluation of program predicates.
+
+One may argue that, since the arrangement of terms differs, the answers are not the same. However, recall that in \hcn{}, predicates represent sets, which normally have no ordering. Therefore, in order to be compatible with the language semantics, an implementation ideally shall not return multiple answers.
 
 \backmatter
 
