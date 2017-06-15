@@ -340,6 +340,7 @@ To better understand why the above formula works, consider the following:
                                           & ~\Leftrightarrow~ \mathsf{\lnot A \lor \left( A \land \lnot B \right)} & (\text{rev. distributive law})
 \end{align*}
 
+(...)
 % The reason the above formula works is twofold. First, it makes no assumption on the type of \msf{A_i}: it could be an equality, an inequality, a literal, etc. Second, it does not require all (possibly infinite) literals that make up \msf{A} to be available at the time of application. Thus, it is a somehow ``lazy'' operator in functional programming terms.
 
 \section{Extensional Higher-Order Logic Programming}
@@ -349,8 +350,9 @@ The term \emph{higher-order} refers to the capability of applying and passing ar
 
 The term \emph{extensional} refers to the way program predicates can be passed and used, or otherwise, to what makes up a predicate or what a predicate really is. In an extensional language, two predicates are considered to be equal (i.e. the same) if they are true for the same set of arguments. The opposite of this term is \emph{intentional} and in languages belonging to this category, predicates are more than just a set of arguments for which they are true (e.g. they are also discriminated by their name).
 
-The notions of extensional higher-order logic programming and constructive negation proved to be very compatible and, based on that observation, the \hcn{} language was created \cite{DBLP:conf/kr/CharalambidisR14}.
+(...)
 
+The notions of extensional higher-order logic programming and constructive negation proved to be very compatible and, based on that observation, the \hcn{} language was created \cite{DBLP:conf/kr/CharalambidisR14}.
 
 \chapter{THE HIGHER-ORDER LANGUAGE \hcn}
 \label{chap:hcn}
@@ -671,6 +673,8 @@ In order to extend the constructive negation rule for the higher-order logic pro
 Recall equation \ref{eq:cneg}, which outlines the equality theory rule that is applied in constructive negation. This rule works well when first order literals (equalities or inequalities) are selected and is employed in rule 6(d) of definition \ref{def:negreduction}.
 
 When considering the higher-order terms of \h{}, then a more sophisticated version of that formula is required. The reason is that higher-order terms are not ``flat''.
+
+(...)
 
 The above described behaviour is implemented by rules 7, 10 and 11 of definition \ref{def:negreduction}.
 
@@ -1029,13 +1033,13 @@ If we consider the computation tree (show in figure \ref{fig:comptreeold} below)
 \section{Tweaking the proof procedure}
 Based on the previous chapter, it is obvious that any implementation of \hcn{} has to take measures in order to make sure that the sets that are constructed via the constructive negation rule do not contain duplicate members. Therefore, some kind of restriction has to be put in place before the proof procedure continues with the computation of the ``next'' element.
 
-This is the approach that we take. We introduce restrictions in the format of inequalities, when the constructive negation rule is applied. These inequalities have to be introduced in such a way, that will cause the computation to fail when an expression is to be ``inserted'' for the second time in a set and they will allow it to proceed otherwise.
+This is the approach that we take. We introduce restrictions in the format of (in)equalities, when the constructive negation rule is applied. These (in)equalities have to be introduced in such a way, that will cause the computation to fail when an expression is to be ``inserted'' for the second time in a set and they will allow it to proceed otherwise.
 
 Based on the above description, an obvious observation can be made. As the number of elements in a set increases, so does the number of the restrictive inequalities. This is normal, as we need an inequality per element currently in the set.
 
 In this section we will define the modified proof procedure. In the next section we will present how and explain why the proposed approach works. Before outlining the modified versions of the rules of negative reduction (definition \ref{def:negreduction}), we need to define the \emph{trimmed substitution} operator.
 
-\begin{definition}{\emph{Trimmed substitution}}
+\begin{definition}{\emph{Trimmed substitution operator}}
 \label{def:trimmedsub}
 
 Let \msf{L} be a lambda expression and \msf{P} be a predicate variable of type $\kappa$.
@@ -1068,9 +1072,9 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
           \item[(b)] if \msf{R \not \in \widehat{U}} and \msf{n > 1}, then
                 \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~\land \sim \exists \widehat{U}_2 ~ A' ~\land B_{1} \right)},
 
-                where \msf{B_{1} = \sim\exists \widehat{U}' \left( \left( S^{-}\left( R \right) ~\widehat{E}' \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+                where \msf{B_{1} = \sim\exists \widehat{U}' \left( \left( S^{-}\left( R \right) ~\widehat{E}' \right) \land \left( A' \lor \left( \widehat{E} \approx_{\lor} \widehat{E}' \right) \right) \right)},
 
-                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'}, \msf{\widehat{U}_{1}'}, \msf{\widehat{E}'} are renamed versions of variables in \msf{\widehat{U}}, \msf{\widehat{U}_{1}} and \msf{\widehat{E}} respectively;
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'}, \msf{\widehat{E}'} are renamed versions of variables in \msf{\widehat{U}} and \msf{\widehat{E}} respectively;
         \end{enumerate}
   \item[10.] if \msf{A_i} is \msf{\sim \exists \widehat{V} \left( R ~ \widehat{E} \right)} and \msf{R \not\in \widehat{V}} is a predicate variable,
         then:
@@ -1078,18 +1082,18 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
           \item[(b)] if \msf{R \not\in \widehat{U}} and \msf{n > 1},
                 then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~ \land \sim \exists \widehat{U}_2 ~ A' \land B_{1} \right)},
 
-                where \msf{B_{1} = \sim\exists \widehat{U}' \left( \left( S^{-}\left( R \right) ~\widehat{E}' \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+                where \msf{B_{1} = \sim\exists \widehat{U}' \left( \left( S^{-}\left( R \right) ~\widehat{E}' \right) \land \left( A' \lor \left( \widehat{E} \approx_{\lor} \widehat{E}' \right) \right) \right)},
 
-                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'}, \msf{\widehat{U}_{1}'}, \msf{\widehat{E}'} are renamed versions of variables in \msf{\widehat{U}}, \msf{\widehat{U}_{1}} and \msf{\widehat{E}} respectively;
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'}, \msf{\widehat{E}'} are renamed versions of variables in \msf{\widehat{U}} and \msf{\widehat{E}} respectively;
         \end{enumerate}
   \item[11.] if \msf{A_i} is \msf{\sim \exists \widehat{V} \sim \left( R ~ \widehat{E} \right)} and \msf{R} is a predicate variable and \msf{R \not\in \widehat{V}}, then:
         \begin{enumerate}
           \item[(b)] if \msf{R \not\in \widehat{U}} and \msf{n > 1},
                 then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~ \land \sim \exists \widehat{U}_2 ~ A' \land B_{1} \right)},
 
-                where \msf{B_{1} = \sim\exists \widehat{U}' \left( \left( S^{-}\left( R \right) ~\widehat{E}' \right) \land \left( A' \lor \left( \widehat{U}_{1} \approx_{\lor} \widehat{U}_{1}' \right) \right) \right)},
+                where \msf{B_{1} = \sim\exists \widehat{U}' \left( \left( S^{-}\left( R \right) ~\widehat{E}' \right) \land \left( A' \lor \left( \widehat{E} \approx_{\lor} \widehat{E}' \right) \right) \right)},
 
-                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'}, \msf{\widehat{U}_{1}'}, \msf{\widehat{E}'} are renamed versions of variables in \msf{\widehat{U}}, \msf{\widehat{U}_{1}} and \msf{\widehat{E}} respectively;
+                \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i}, \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1} and \msf{\widehat{U}'}, \msf{\widehat{E}'} are renamed versions of variables in \msf{\widehat{U}} and \msf{\widehat{E}} respectively;
         \end{enumerate}
 \end{enumerate}
 \end{definition}
