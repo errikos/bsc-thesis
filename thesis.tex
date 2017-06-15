@@ -944,6 +944,10 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
 
 In order to introduce a restriction among the variables in the selected expression \msf{A_i} and the ones in the repeated expression \msf{B}, the latter needed to be within the scope of the quantification of \msf{\widehat{U}_1}. That's why \msf{B} was moved inside the aforementioned scope, in conjunction with the other subgoals and renamed to \msf{B_1} for the needs of the definition.
 
+The first thing to observe here is that we have not introduced inequalities, but equalities! The reason is that these equalities are inside a negated expression and upon its evaluation they will turn in inequalities. Another interesting point is that the restrictive inequalities have been introduced in disjunction with the rest of the goal (\msf{A'}).
+
+The detailed reasons for the above choices will become evident in the next section. Intuitively however, think again of expression \msf{B_1}, which is a negated expression. If we distribute the negation (after evaluating \msf{S^{-} \left( R \right) \widehat{E}'}, which causes the constructive negation rule for higher-order expressions to be applied again), the disjunction will become a conjunction and its expressions will become negated.
+
 
 \section{Why the approach works}
 
