@@ -1035,6 +1035,7 @@ Based on the above description, an obvious observation can be made. As the numbe
 In this section we will define the modified proof procedure. In the next section we will present how and explain why the proposed approach works. Before outlining the modified versions of the rules of negative reduction (definition \ref{def:negreduction}), we need to define the \emph{trimmed substitution} operator.
 
 \begin{definition}{\emph{Trimmed substitution}}
+\label{def:trimmedsub}
 
 Let \msf{L} be a lambda expression and \msf{P} be a predicate variable of type $\kappa$.
 
@@ -1092,14 +1093,148 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
 \end{enumerate}
 \end{definition}
 
-In order to introduce a restriction among the variables in the selected expression \msf{A_i} and the ones in the repeated expression \msf{B}, the latter needed to be within the scope of the quantification of \msf{\widehat{U}_1}. That's why \msf{B} was moved inside the aforementioned scope, in conjunction with the other subgoals and renamed to \msf{B_1} for the needs of the definition.
+In order to introduce a restriction among the variables in the selected expression \msf{A_i} and the ones in the repeated expression \msf{B}, the latter needs to be within the scope of the quantification of \msf{\widehat{U}_1}. That's why \msf{B} was moved inside the aforementioned scope, in conjunction with the other subgoals and renamed to \msf{B_1} for the needs of the definition.
 
-The first thing to observe here is that we have not introduced inequalities, but equalities! The reason is that these equalities are inside a negated expression and upon its evaluation they will turn in inequalities. Another interesting point is that the restrictive inequalities have been introduced in disjunction with the rest of the goal (\msf{A'}).
+The first thing to observe here is that we have not introduced inequalities, but equalities! The reason is that these equalities are inside a negated expression and upon its evaluation they will turn into inequalities. Another interesting point is that the restrictive inequalities have been introduced in disjunction with the rest of the goal (\msf{A'}).
 
 The detailed reasons for the above choices will become evident in the next section. Intuitively however, think again of expression \msf{B_1}, which is a negated expression. If we distribute the negation (after evaluating \msf{S^{-} \left( R \right) \widehat{E}'}, which causes the constructive negation rule for higher-order expressions to be applied again), the disjunction will become a conjunction and its expressions will become negated.
 
 
 \section{Why the approach works}
+It may be initially unclear why the proposed approach works and the truth is that it is not so obvious. It took a ``reverse engineering'' methodology in order to come up with it and once we delve into it, everything will become more clear.
+
+First of all, let us consider the computation point that does not exhibit the desired behaviour. Look at step 20 of example \ref{ex:subsettrace}. At that step, the implementation computes the second value of \texttt{P}, which is variable \texttt{V12}. There are three choices for \texttt{V12}: \texttt{0}, \texttt{1} or \texttt{2}. The computation procedure is obliged to check all of them. When it picks the first value (\texttt{V12 = 0}), there has to be something in the goal list that will cause the path that is currently being followed to fail.
+
+To help us with the task, we consider a simplified snapshot of the computation procedure for the \texttt{subset} query:
+
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+?- subset(P, q).
+
+   (1) $\sim$(\underline{non_subset(P, q)}) ?
+
+   (2) $\sim$($\exists$V4 P(V4), $\sim$q(V4)) ?
+
+   (3) $\sim$($\exists$V4 P(V4));
+       ($\exists$V4 P(V4), $\sim$($\sim$q(V4))), $\sim$($\exists$V4 P(V4), $\sim$q(V4)) ?
+
+   (4) $\sim$($\exists$V4 P(V4)) ?
+
+   (5) true ?
+
+   yes
+   P = { }
+
+   (6) ($\exists$V4 P(V4), $\sim$($\sim$q(V4))), $\sim$($\exists$V4 P(V4), $\sim$q(V4)) ?
+
+   (7) P(V5), $\sim$($\sim$q(V5)), $\sim$($\exists$V4 P(V4), $\sim$q(V4)) ?
+
+   (8) $\sim$($\sim$q(V5)), $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
+
+   ...
+
+   (9) $\sim$($\sim$(($\lambda$X.X=0)(V5)), $\sim$(($\lambda$X.X=1)(V5)), $\sim$(($\lambda$X.X=2)(V5))),
+       $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
+
+  (10) $\sim$($\sim$(V5=0), $\sim$(($\lambda$X.X=1)(V5)), $\sim$(($\lambda$X.X=2)(V5))),
+       $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
+
+  (11) V5=0; $\sim$($\sim$(($\lambda$X.X=1)(V5)), $\sim$(($\lambda$X.X=2)(V5))),
+       $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
+
+  (12) V5=0, $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
+
+  (13) $\sim$($\exists$V4 (($\lambda$X.X=0) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
+
+  (14) $\sim$($\exists$V4 (($\lambda$X.X=0)(V4); V8(V4), $\sim$q(V4)) ?
+
+  (15) $\sim$($\exists$V4 (($\lambda$X.X=0)(V4), $\sim$q(V4)), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (16) $\sim$($\exists$V4 V4 = 0, $\sim$q(V4)), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (17) $\sim$($\exists$V4 $\sim$q(0)), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+   ...
+
+  (18) $\sim$($\exists$V4 $\sim$(($\lambda$X.X=0)(0)), $\sim$(($\lambda$X.X=1)(0)), $\sim$(($\lambda$X.X=2)(0))),
+       $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (19) $\sim$($\exists$V4 $\sim$(0 = 0), $\sim$(($\lambda$X.X=1)(0)), $\sim$(($\lambda$X.X=2)(0))),
+       $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (20) $\sim$($\exists$V4 $\sim$(true), $\sim$(($\lambda$X.X=1)(0)), $\sim$(($\lambda$X.X=2)(0))),
+       $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (21) $\sim$($\exists$V4 false, $\sim$(($\lambda$X.X=1)(0)), $\sim$(($\lambda$X.X=2)(0))),
+       $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (22) $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (23) $\sim$($\exists$V4 V8(V4));
+       ($\exists$V4 P(V4), $\sim$($\sim$q(V4))), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (24) $\sim$($\exists$V4 V8(V4)) ?
+
+  (25) true ?
+
+  yes
+  P = { 0 }
+
+  (26) ($\exists$V4 V8(V4) $\sim$($\sim$q(V4))), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (27) V8(V12), $\sim$($\sim$q(V12)), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+
+  (28) $\sim$($\sim$q(V12)), $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+
+   ...
+
+  (29) $\sim$($\sim$(($\lambda$X.X=0)(V12)), $\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
+       $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+
+  (30) $\sim$($\sim$(V12=0), $\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
+       $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+
+  (31) V12=0; $\sim$($\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
+       $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+
+  (32) V12=0, $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+
+  (33) $\sim$($\exists$V4 (($\lambda$X.X=0) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+
+  (34) $\sim$($\exists$V4 ($\lambda$X.X=0)(V4); V15(V4), $\sim$q(V4)) ?
+
+  (35) $\sim$($\exists$V4 ($\lambda$X.X=0)(V4), $\sim$q(V4)), $\sim$($\exists$V4 V15(V4), $\sim$q(V4)) ?
+
+  ...
+
+  (36) $\sim$($\exists$V4 V15(V4), $\sim$q(V4)) ?
+
+  (37) $\sim$($\exists$V4 V15(V4));
+       ($\exists$V4 V15(V4), $\sim$($\sim$q(V4))), $\sim$($\exists$V4 V15(V4), $\sim$q(V4)) ?
+
+  (38) $\sim$($\exists$V4 V15(V4)) ?
+
+  (39) true ?
+
+  yes
+  P = { 0, 0 }
+\end{lstlisting}
+
+By carefully looking at the trace above, we notice two things:
+\begin{itemize}
+  \item Look that the expression \texttt{(($\lambda$X.X=0) $\vee_{\kappa}$ V15)} at step 28.
+
+  This expression occurs from the substitution of variable \texttt{V8} at step 27. The path that is due to the lambda expression within the above expression (that is, the first context in step 35) contributes nothing to the computation. This is because in step 32, \texttt{V12} is being assigned a value from the completed definition of \msf{q} and then the aforementioned path essentially asks whether the resulting expression is true for \msf{q} (look at steps 15-21 for a detailed sequence of steps). Of course, it is always true. We will utilise this property in our modified procedure (we will essentially trim that path, recall definition \ref{def:trimmedsub} -- trimmed substitution).
+  \item Now look at the second context of step 35, whose computation commences at step 36. Since its first expression is a higher-order expression, the constructive negation rule will be applied, leading to step 37. By then, it is too late to apply any restriction, because step 38 always succeeds. Therefore, we need to add our restriction in such a way, so that in step 32 there is another subgoal that disproves the \texttt{V12=0} equality, namely:
+  \begin{lstlisting}[language=Prolog,%
+    frame=single,breaklines=false,mathescape=true]
+  (32) V12=0, $\sim$(V12=0), $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+  \end{lstlisting}
+\end{itemize}
+
+Pay close attention to the variables that we want to restrict: variable \texttt{V12} will be the second variable to be added to \texttt{P} and we want to find an acceptable value for it. We want that value to be different from the value of the variable already in \texttt{P}. This means that any restriction has to be put into place while we still have access to the first variable of \texttt{P} (namely, \texttt{V5} from step 7).
+
+Our modified definition adds the restriction upon the application of the constructive negation rule. That means that the restriction
 
 \section{Limitations}
 \label{section:limitations}
