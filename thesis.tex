@@ -20,6 +20,7 @@
   breaklines=true,
 }
 
+\usepackage{tikz}
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{enumerate}
@@ -864,11 +865,159 @@ The first negated expression is now a conjunction of expressions, the first of w
   $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
 \end{lstlisting}
 
-The above goal list is exactly the same as the goal list in step 4, except for one difference: instead of predicate variable \texttt{P} we now have \texttt{V8}.
+There is one important observation to make at this point. The above goal list is exactly the same as the goal list in step 4, except for one difference: instead of predicate variable \texttt{P} we now have \texttt{V8}.
 
 Recall that, from step 10, predicate variable \texttt{P} is bound to \texttt{($\lambda$X.(X=V5) $\bigvee_{\kappa}$ V8)} and, from step 13, variable \texttt{V5} is bound to \texttt{0}. Therefore, \texttt{P = 0 $\bigvee_{\kappa}$ V8}.
 
+This should give more clear view of how the extended constructive negation rule for higher-order predicates works. Higher-order variable \texttt{V8} occured from step 9 and acts as the ``tail'' of \texttt{P}. However, should the rule not contain the \msf{\dots \land B} part, it would never have a chance to be computed.
+
+\item At this point, the constructive negation rule (definition \ref{def:negreduction}.7 (b)) is applied again:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  $\sim$($\exists$V4 V8(V4));
+  ($\exists$V4 V8(V4), $\sim$($\sim$q(V4))), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+
+As in step 6, the first path is followed:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  $\sim$($\exists$V4 V8(V4)) ?
+
+  true ?
+\end{lstlisting}
+
+and the second answer is returned:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  yes
+  P = { 0 }
+\end{lstlisting}
+
+The computation continues with the second path:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  ($\exists$V4 V8(V4), $\sim$($\sim$q(V4))), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+
+Since the rules that are applied are identical as before, in the following we omit detailed explanation of every rule application.
+
+\item Rule \ref{def:singlestepderivation}.3 is applied and a fresh variable is introduced in place of \texttt{V8} in the previously quantified context:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  V8(V12), $\sim$($\sim$q(V12)), $\sim$($\exists$V4 V8(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+
+\item The selected literal is now \texttt{V8(V12)}, therefore rule \ref{def:singlestepderivation}.6 is applied and substitution \msf{\theta = \left\{ \texttt{V8} / \left( \lambda \texttt{X}. (\texttt{X} = \texttt{V12}) \bigvee_{\kappa} \texttt{V15} \right) \right\}} is produced.
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  $\sim$($\sim$q(V12)), $\sim$($\exists$V4 (($\lambda$X.X = V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+
+\item As before, the completed definition of predicate \msf{q} is replaced in place of predicate constant \texttt{q}.
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  $\sim$($\sim$(($\lambda$X.X=0) $\vee_{\kappa}$ ($\lambda$X.X=1) $\vee_{\kappa}$ ($\lambda$X.X=2))(V12)),
+  $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+which, as before, becomes:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  $\sim$($\sim$(($\lambda$X.X=0)(V12)), $\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
+  $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+And after reducing the first expression of the completed definition, we get:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  $\sim$($\sim$(V12=0), $\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
+  $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+Application of rule \ref{def:negreduction}.9 (b) gives:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  V12=0; $\sim$($\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
+  $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+Which gives:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  V12=0, $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+Recall that the composition of unifiers up to this point have bounded \texttt{P} to be \texttt{P = 0 $\vee_{\kappa}$ ($\lambda$X.(X=V12) $\vee_{\kappa}$ V15)}. After applying the unification and reducing, we get:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+$\sim$($\exists$V4 ($\lambda$X.X=0)(V4); V15(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+So \texttt{P} becomes: \texttt{P = 0 $\vee_{\kappa}$ 0 $\vee_{\kappa}$ V15}.
+
+\item Skipping some rule applications identical to previous steps, the goal list becomes:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+$\sim$($\exists$V4 V15(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+
+The constructive negation rule (definition \ref{def:negreduction}.7 (b)) is applied at this point and the goal list becomes:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  $\sim$($\exists$V4 V15(V4));
+  ($\exists$V4 V15(V4), $\sim$($\sim$q(V4))), $\sim$($\exists$V4 V15(V4), $\sim$q(V4)) ?
+\end{lstlisting}
+
+The first path is followed, which leads to \msf{true} and the third answer is returned:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true]
+  yes
+  P = { 0, 0 }
+\end{lstlisting}
 \end{enumerate}
+
+Steps 17 through 21 will repeat for ever, adding only zeroes to the returned answers. In the absence of restrictions for the next selected expression, the implementation will always add the first choice it finds. Furthermore, the rest of paths that would occur from selecting alternative expressions will never be followed.
+
+If we consider the computation tree, the above process would correspond to following the leftmost branch every time, thus ending up at the bottom left of the tree (which is of course of infinite depth assuming that the machine it runs on has infinite memory).
+
+\tikzset{
+  label/.style = {align=center, black}
+}
+
+\begin{figure}[h!]
+\centering\scriptsize
+\begin{tikzpicture}[sibling distance=10em, level distance=5em]
+  \node[label] {\msf{P = \underline{X_1} \bigvee_{\kappa} X_2}}
+    child[red,thick] { node[label] {\msf{P = 0 \bigvee_{\kappa} \underline{X_2} \bigvee_{\kappa} X_3}}
+      child { node[label] {\msf{P = 0 \bigvee_{\kappa} 0 \bigvee_{\kappa} \underline{X_3} \bigvee_{\kappa} X_4}}
+        child { node[label] {\msf{P = 0 \bigvee_{\kappa} 0 \bigvee_{\kappa} 0 \bigvee_{\kappa} \underline{X_4} \bigvee_{\kappa} X_5}}
+          child[dashed,red,thick] {
+            edge from parent node[above left] {\tiny\msf{X_4 = 0}}
+            node {\msf{\dots}}
+          }
+          child[missing] {}
+          child[missing] {}
+          edge from parent node[above left] {\tiny\msf{X_3 = 0}}
+        }
+        child[black,thin] { node[label] {\msf{\dots}}
+          edge from parent node[left] {\tiny\msf{X_3 = 1}}
+        }
+        child[black,thin] { node[label] {\msf{\dots}}
+          edge from parent node[above right] {\tiny\msf{X_3 = 2}}
+        }
+        edge from parent node[above left] {\tiny\msf{X_2 = 0}}
+      }
+      child[black,thin] { node[label] {\msf{\dots}}
+        edge from parent node[left] {\tiny\msf{X_2 = 1}}
+      }
+      child[black,thin] { node[label] {\msf{\dots}}
+        edge from parent node[above right] {\tiny\msf{X_2 = 2}}
+      }
+      edge from parent node[above left] {\tiny\msf{X_1 = 0}}
+    }
+    child[black,thin] { node[label] {\msf{\dots}}
+            edge from parent node[left] {\tiny\msf{X_1 = 1}} }
+    child[black,thin] { node[label] {\msf{\dots}}
+            edge from parent node[above right] {\tiny\msf{X_1 = 2}} }
+
+  ;
+\end{tikzpicture}
+\caption{The computation tree of the current implementation}
+\end{figure}
 \end{example}
 
 \chapter{THE PROPOSED APPROACH}
