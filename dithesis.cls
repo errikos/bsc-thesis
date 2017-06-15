@@ -574,7 +574,7 @@ publications}\gdef\@lopfileinternal{#1}}
     \makeatother
 
     \pagestyle{empty}
-    % \listoffigures
+    \listoffigures
     \cleardoublepage
     \endgroup
 
