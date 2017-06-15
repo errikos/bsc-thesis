@@ -22,6 +22,7 @@
 
 \usepackage{tikz}
 \usepackage{float}
+\usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{enumerate}
@@ -1108,10 +1109,10 @@ First of all, let us consider the computation point that does not exhibit the de
 To help us with the task, we consider a simplified snapshot of the computation procedure for the \texttt{subset} query:
 
 \begin{lstlisting}[language=Prolog,%
-  frame=single,breaklines=false,mathescape=true]
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
 ?- subset(P, q).
 
-   (1) $\sim$(\underline{non_subset(P, q)}) ?
+   (1) $\sim$(non_subset(P, q)) ?
 
    (2) $\sim$($\exists$V4 P(V4), $\sim$q(V4)) ?
 
@@ -1234,7 +1235,7 @@ By carefully looking at the trace above, we notice two things:
 
 Pay close attention to the variables that we want to restrict: variable \texttt{V12} will be the second variable to be added to \texttt{P} and we want to find an acceptable value for it. We want that value to be different from the value of the variable already in \texttt{P}. This means that any restriction has to be put into place while we still have access to the first variable of \texttt{P} (namely, \texttt{V5} from step 7).
 
-Our modified definition adds the restriction upon the application of the constructive negation rule. That means that the restriction
+Our modified definition adds the restriction upon the first application of the constructive negation rule, that is step 3. At that point, we do not yet know what value of the first variable will be, but we surely know that we want its value to be different from the value of the second variable.
 
 \section{Limitations}
 \label{section:limitations}
