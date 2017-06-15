@@ -1106,8 +1106,8 @@ It may be initially unclear why the proposed approach works and the truth is tha
 
 First of all, let us consider the computation point that does not exhibit the desired behaviour. Look at step 20 of example \ref{ex:subsettrace}. At that step, the implementation computes the second value of \texttt{P}, which is variable \texttt{V12}. There are three choices for \texttt{V12}: \texttt{0}, \texttt{1} or \texttt{2}. The computation procedure is obliged to check all of them. When it picks the first value (\texttt{V12 = 0}), there has to be something in the goal list that will cause the path that is currently being followed to fail.
 
-To help us with the task, we consider a simplified snapshot of the computation procedure for the \texttt{subset} query:
-
+To help us with the task, we consider a simplified snapshot of the computation procedure for the \texttt{subset} query. A trace that goes up to the second returned answer is sufficient in order to demonstrate the desired points:
+\\
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
 ?- subset(P, q).
@@ -1219,13 +1219,14 @@ To help us with the task, we consider a simplified snapshot of the computation p
 
   yes
   P = { 0, 0 }
+  ...
 \end{lstlisting}
 
 By carefully looking at the trace above, we notice two things:
 \begin{itemize}
   \item Look that the expression \texttt{(($\lambda$X.X=0) $\vee_{\kappa}$ V15)} at step 28.
 
-  This expression occurs from the substitution of variable \texttt{V8} at step 27. The path that is due to the lambda expression within the above expression (that is, the first context in step 35) contributes nothing to the computation. This is because in step 32, \texttt{V12} is being assigned a value from the completed definition of \msf{q} and then the aforementioned path essentially asks whether the resulting expression is true for \msf{q} (look at steps 15-21 for a detailed sequence of steps). Of course, it is always true. We will utilise this property in our modified procedure (we will essentially trim that path, recall definition \ref{def:trimmedsub} -- trimmed substitution).
+  This expression occurs from the substitution of variable \texttt{V8} at step 27. The path that is due to the lambda expression within the above expression (that is, the first context in step 35) contributes nothing to the computation. This is because in step 32, \texttt{V12} is being assigned a value from the completed definition of \msf{q} and then the aforementioned path essentially asks whether the resulting expression is true for \msf{q} (look at steps 15-21 for a detailed sequence of steps). Of course, that is always true. We will utilise this property in our modified procedure (we will essentially trim that path, recall definition \ref{def:trimmedsub} -- trimmed substitution).
   \item Now look at the second context of step 35, whose computation commences at step 36. Since its first expression is a higher-order expression, the constructive negation rule will be applied, leading to step 37. By then, it is too late to apply any restriction, because step 38 always succeeds. Therefore, we need to add our restriction in such a way, so that in step 32 there is another subgoal that disproves the \texttt{V12=0} equality, namely:
   \begin{lstlisting}[language=Prolog,%
     frame=single,breaklines=false,mathescape=true]
@@ -1241,12 +1242,175 @@ Let us now show how the modified proof procedure works. The first step that chan
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
    (3) $\sim$($\exists$V4 P(V4));
-       ($\exists$V4 P(V4), $\sim$($\sim$q(V4)), $\sim$($\exists$V5 P(V5), ($\sim$q(V5); V4 = V5))) ?
+       ($\exists$V4 P(V4), $\sim$($\sim$q(V4)), $\sim$($\exists$V5 S<@\textsuperscript{-}@>(P)(V5), ($\sim$q(V5); V4 = V5))) ?
 \end{lstlisting}
+
+The first expression in the disjunction is the same, so it leads to the same first answer being returned, as before.
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+   (4) $\sim$($\exists$V4 P(V4)) ?
+
+   (5) true ?
+
+   yes
+   P = { }
+\end{lstlisting}
+
+The computation now continues with the second path:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+   (6) ($\exists$V4 P(V4), $\sim$($\sim$q(V4)), $\sim$($\exists$V5 S<@\textsuperscript{-}@>(P)(V5), ($\sim$q(V5); V4 = V5))) ?
+\end{lstlisting}
+
+Notice that now, the \texttt{$\exists$V4} quantification is over the whole goal list, therefore every \texttt{V4} variable gets renamed to \texttt{V6}.
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+   (7) P(V6), $\sim$($\sim$q(V6)), $\sim$($\exists$V5 S<@\textsuperscript{-}@>(P)(V5), ($\sim$q(V5); V6 = V5)) ?
+
+   (8) $\sim$($\sim$q(V6)), $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
+
+   ...
+
+   (9) $\sim$($\sim$(($\lambda$X.X=0)(V6)), $\sim$(($\lambda$X.X=1)(V6)), $\sim$(($\lambda$X.X=2)(V6))),
+       $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
+
+  (10) $\sim$($\sim$(V6=0), $\sim$(($\lambda$X.X=1)(V6)), $\sim$(($\lambda$X.X=2)(V6))),
+       $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
+
+  (11) V6=0; $\sim$($\sim$(($\lambda$X.X=1)(V6)), $\sim$(($\lambda$X.X=2)(V6))),
+       $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
+
+  (12) V6=0, $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
+
+  (13) $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=0) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); 0 = V5)) ?
+\end{lstlisting}
+
+At this point the implementation has to apply the trimmed substitution operator:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  (14) $\sim$($\exists$V5 V9(V5), ($\sim$q(V5); 0 = V5)) ?
+\end{lstlisting}
+
+At this point, the extended constructive negation rule is applied again and another restriction is introduced. The purpose of this restriction is to prevent the third variable that may later be added to \texttt{P} of being equal to the first or the second one.
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  (15) $\sim$($\exists$V5 V9(V5));
+       ($\exists$V5 V9(V5), $\sim$($\sim$q(V5); 0 = V5),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(V9)(V13), ($\sim$q(V13); 0 = V13; V5 = V13))) ?
+\end{lstlisting}
+
+In the above step 15, \texttt{V13} is the next (third) variable to be inserted to \texttt{P}, \texttt{0 = V13} restricts it be different than the first one and \texttt{V5 = V13} restricts it to be different than the second one.
+
+Continuing with the computation, the first branch of step 15 leads to the second answer being returned:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  (16) $\sim$($\exists$V5 V9(V5)) ?
+
+  (17) true ?
+
+  yes
+  P = { 0 }
+\end{lstlisting}
+
+And the second branch does its magic as follows:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  (18) ($\exists$V5 V9(V5), $\sim$($\sim$q(V5); 0 = V5),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(V9)(V13), ($\sim$q(V13); 0 = V13; V5 = V13))) ?
+
+  (19) V9(V14), $\sim$($\sim$q(V14); 0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(V9)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (20) $\sim$($\sim$q(V14); 0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (21) $\sim$($\sim$q(V14)), not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+\end{lstlisting}
+
+Notice how at step 21 above, due to the negation, the equality in disjunction became an inequality in conjunction.
+
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  (21) $\sim$($\sim$q(V14)), not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  ...
+
+  (22) $\sim$($\sim$(($\lambda$X.X=0)(V14)), $\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (23) $\sim$($\sim$(V14=0), $\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (24) V14=0; $\sim$($\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (25) V14=0, not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+\end{lstlisting}
+
+The goal list in step 25 above contains everything that we have been fighting for. Obviously the first two expressions form a contradiction and will cause this path to fail.
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  (26) not(0 = 0),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=0) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 0 = V13)) ?
+
+  (27) not(true),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=0) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 0 = V13)) ?
+
+  (28) false,
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=0) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 0 = V13)) ?
+\end{lstlisting}
+
+At this point the implementation will backtrack to step 24:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  (25) $\sim$($\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (26) $\sim$($\sim$(V14=1), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (27) V14=1; $\sim$($\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (28) V14=1, not(0 = V14),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
+
+  (29) not(0 = 1),
+          $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=1) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 1 = V13)) ?
+\end{lstlisting}
+
+At this point, rule \ref{def:negreduction}.6 is applied. The inequality \texttt{not(0 = 1)} is valid, therefore the first expression evaluates to \msf{true}.
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  (30) true,
+       $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=1) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 1 = V13)) ?
+
+  (31) $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=1) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 1 = V13)) ?
+
+  (32) $\sim$($\exists$V13 V17(V13), ($\sim$q(V13); 0 = V13; 1 = V13)) ?
+
+  (33) $\sim$($\exists$V13 V17(V13));
+       ($\exists$V13 V17(V13), $\sim$($\sim$q(V13); 0 = V13; 1 = V13),
+          $\sim$($\exists$V30 V17(V30), ($\sim$q(V30); 0 = V30; 1 = V30; V13 = V30))) ?
+
+  (34) $\sim$($\exists$V13 V17(V13)) ?
+
+  (35) true ?
+
+  yes
+  P = { 0, 1 }
+
+  ...
+\end{lstlisting}
+
+The above procedure will continue until all possible combinations of valid values for \texttt{P} have been checked. It is also obvious that the above procedure terminates, since the completed definition of \msf{q} is finite and every value from the previous that is added to \texttt{P} is different from the values added before it.
 
 \section{Limitations}
 \label{section:limitations}
-While the approach outlined in this chapter fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
+While the approach outlined in the previous sections fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
 
 To understand why this problem exists, consider again the \texttt{subset} trace (example \ref{ex:subsettrace}). Every time that the negation rule is applied on the expression that extends \msf{P}, normally the definition of predicate \msf{q} is inserted into the computation. The completed definition of \msf{q} is always the same and the implementation has to choose one of the possible values (in example \ref{ex:subsettrace} the possible values are \msf{0}, \msf{1} or \msf{2}). Our modified rule inserts inequalities in order to restrict the new value to be different from any previous value.
 
