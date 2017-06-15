@@ -21,6 +21,7 @@
 }
 
 \usepackage{tikz}
+\usepackage{float}
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{enumerate}
@@ -972,13 +973,13 @@ The first path is followed, which leads to \msf{true} and the third answer is re
 
 Steps 17 through 21 will repeat for ever, adding only zeroes to the returned answers. In the absence of restrictions for the next selected expression, the implementation will always add the first choice it finds. Furthermore, the rest of paths that would occur from selecting alternative expressions will never be followed.
 
-If we consider the computation tree, the above process would correspond to following the leftmost branch every time, thus ending up at the bottom left of the tree (which is of course of infinite depth assuming that the machine it runs on has infinite memory).
+If we consider the computation tree (show in figure \ref{fig:comptreeold} below), the above process would correspond to following the leftmost branch every time, thus ending up at the bottom left of the tree (which is of course of infinite depth assuming that the machine it runs on has infinite memory).
 
 \tikzset{
   label/.style = {align=center, black}
 }
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering\scriptsize
 \begin{tikzpicture}[sibling distance=10em, level distance=5em]
   \node[label] {\msf{P = \underline{X_1} \bigvee_{\kappa} X_2}}
@@ -1017,6 +1018,7 @@ If we consider the computation tree, the above process would correspond to follo
   ;
 \end{tikzpicture}
 \caption{The (simplified) computation tree of the current implementation}
+\label{fig:comptreeold}
 \end{figure}
 \end{example}
 
