@@ -1237,6 +1237,13 @@ Pay close attention to the variables that we want to restrict: variable \texttt{
 
 Our modified definition adds the restriction upon the first application of the constructive negation rule, that is step 3. At that point, we do not yet know what value of the first variable will be, but we surely know that we want its value to be different from the value of the second variable.
 
+Let us now show how the modified proof procedure works. The first step that changes is step 3. Instead of appending \msf{B} to the goal list, we insert it into the context of the quantified \texttt{V4} variable and also include an equality in disjunction with \msf{A'}:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+   (3) $\sim$($\exists$V4 P(V4));
+       ($\exists$V4 P(V4), $\sim$($\sim$q(V4)), $\sim$($\exists$V5 P(V5), ($\sim$q(V5); V4 = V5))) ?
+\end{lstlisting}
+
 \section{Limitations}
 \label{section:limitations}
 While the approach outlined in this chapter fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
