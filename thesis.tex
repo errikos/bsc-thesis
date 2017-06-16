@@ -57,6 +57,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%% User-specific configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{tocdepth}{1}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%% User-specific configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -220,8 +221,9 @@ would return in \msf{P} all subsets of the set \msf{\left\{ 0, 1, 2 \right\}}.
 What makes the above program powerful, is the ability to write the first rule, which makes use of constructive negation, in order to obtain answers by negating the very simple second rule. The second rule itself is not very useful in the sense that it states something very trivial.
 
 If we try and think of how we would write the same program in a positive logic, then we would normally have to check whether every element of \msf{P} also exists in \msf{Q}. Namely, for all \msf{X \in P}, is \msf{Q(X)} true? This is considerably harder to express, because it involves iterating through \msf{P} (in some way). However, the problem is way more easy to express in a negative logic: \msf{P} is a subset of \msf{Q} if there doesn't exist any \msf{X}, such that \msf{X} is in \msf{P} but not in \msf{Q}.
-
 \end{example}
+
+(...)
 
 \section{Thesis Structure}
 The rest of this thesis is organised as follows. Chapter \ref{chap:background} provides some background on the essential terms of negation as failure, constructive negation and higher-order logic programming. In chapter \ref{chap:hcn} the higher-order logic programming language \hcn{} is defined. In chapter \ref{chap:proof} the rules that make up the proof procedure of \hcn{} are outlined and the problem that makes the implementation challenging is identified and presented. Chapter \ref{chap:approach} shows the proposed approach to overcome the problem and outlines possible limitations. Finally, chapter \ref{chap:conclusion} concludes the thesis and outlines the various possibilities for future work.
@@ -1249,7 +1251,7 @@ Let us now show how the modified proof procedure works. The first step that chan
        ($\exists$V4 P(V4), $\sim$($\sim$q(V4)), $\sim$($\exists$V5 S<@\textsuperscript{-}@>(P)(V5), ($\sim$q(V5); V4 = V5))) ?
 \end{lstlisting}
 
-The first expression in the disjunction is the same, so it leads to the same first answer being returned, as before.
+The first expression in the disjunction remains the same, so it leads to the first answer being returned, as before.
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
    (4) $\sim$($\exists$V4 P(V4)) ?
@@ -1289,7 +1291,7 @@ Notice that now, the \texttt{$\exists$V4} quantification is over the whole goal 
   (13) $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=0) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); 0 = V5)) ?
 \end{lstlisting}
 
-At this point the implementation has to apply the trimmed substitution operator:
+The first variable that has been inserted to \texttt{P} (that is \texttt{V6}) has gotten the value \texttt{0}. At step 13 the implementation has to apply the trimmed substitution operator, which trims the lambda expression and returns only predicate variable \texttt{V9}:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
   (14) $\sim$($\exists$V5 V9(V5), ($\sim$q(V5); 0 = V5)) ?
@@ -1332,7 +1334,7 @@ And the second branch does its magic as follows:
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 \end{lstlisting}
 
-Notice how at step 21 above, due to the negation, the equality in disjunction became an inequality in conjunction.
+Notice how at step 21 above, due to the negation, the equality in disjunction became an inequality in conjunction. The computation continues by replacing the completed definition of \msf{q} and selecting the first possible value (\texttt{V14=0}).
 
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
@@ -1367,7 +1369,7 @@ The goal list in step 25 above contains everything that we have been fighting fo
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=0) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 0 = V13)) ?
 \end{lstlisting}
 
-At this point the implementation will backtrack to step 24:
+At this point the implementation will backtrack to step 24 and select the other path:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
   (25) $\sim$($\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
@@ -1386,7 +1388,7 @@ At this point the implementation will backtrack to step 24:
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=1) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 1 = V13)) ?
 \end{lstlisting}
 
-At this point, rule \ref{def:negreduction}.6 is applied. The inequality \texttt{not(0 = 1)} is valid, therefore the first expression evaluates to \msf{true}.
+At step 29 above, rule \ref{def:negreduction}.6 is applied. The inequality \texttt{not(0 = 1)} is valid, therefore the first expression evaluates to \msf{true}.
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
   (30) true,
@@ -1395,7 +1397,11 @@ At this point, rule \ref{def:negreduction}.6 is applied. The inequality \texttt{
   (31) $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=1) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; 1 = V13)) ?
 
   (32) $\sim$($\exists$V13 V17(V13), ($\sim$q(V13); 0 = V13; 1 = V13)) ?
+\end{lstlisting}
 
+The extended constructive negation rule is applied again and the first path of the resulting goal list will provide us with the third answer.
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
   (33) $\sim$($\exists$V13 V17(V13));
        ($\exists$V13 V17(V13), $\sim$($\sim$q(V13); 0 = V13; 1 = V13),
           $\sim$($\exists$V30 V17(V30), ($\sim$q(V30); 0 = V30; 1 = V30; V13 = V30))) ?
@@ -1410,7 +1416,9 @@ At this point, rule \ref{def:negreduction}.6 is applied. The inequality \texttt{
   ...
 \end{lstlisting}
 
-The above procedure will continue until all possible combinations of valid values for \texttt{P} have been checked. It is also obvious that the above procedure terminates, since the completed definition of \msf{q} is finite and every value from the previous that is added to \texttt{P} is different from the values added before it.
+In step 33 above, a third restriction is placed, in order to restrict the possible values for the fourth member of \texttt{P}. Since the third member will be selected to be \texttt{2}, there is no possible value for the fourth member, so there will be no fourth member. The implementation will backtrack and will try to find an alternative value for the second member, then try to recompute a third element, etc.
+
+The above procedure will continue until all possible combinations of valid values for the members of \texttt{P} have been checked. It is also obvious that the above procedure terminates, since the completed definition of \msf{q} is finite and every value from the previous that is added to \texttt{P} is different from the values added before it.
 
 \section{Limitations}
 \label{section:limitations}
