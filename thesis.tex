@@ -1143,13 +1143,13 @@ To help us with the task, we consider a simplified snapshot of the computation p
    (9) $\sim$($\sim$(($\lambda$X.X=0)(V5)), $\sim$(($\lambda$X.X=1)(V5)), $\sim$(($\lambda$X.X=2)(V5))),
        $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
 
-  (10) $\sim$($\sim$(V5=0), $\sim$(($\lambda$X.X=1)(V5)), $\sim$(($\lambda$X.X=2)(V5))),
+  (10) $\sim$($\sim$(V5 = 0), $\sim$(($\lambda$X.X=1)(V5)), $\sim$(($\lambda$X.X=2)(V5))),
        $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
 
-  (11) V5=0; $\sim$($\sim$(($\lambda$X.X=1)(V5)), $\sim$(($\lambda$X.X=2)(V5))),
+  (11) V5 = 0; $\sim$($\sim$(($\lambda$X.X=1)(V5)), $\sim$(($\lambda$X.X=2)(V5))),
        $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
 
-  (12) V5=0, $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
+  (12) V5 = 0, $\sim$($\exists$V4 (($\lambda$X.X=V5) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
 
   (13) $\sim$($\exists$V4 (($\lambda$X.X=0) $\vee_{\kappa}$ V8)(V4), $\sim$q(V4)) ?
 
@@ -1198,13 +1198,13 @@ To help us with the task, we consider a simplified snapshot of the computation p
   (29) $\sim$($\sim$(($\lambda$X.X=0)(V12)), $\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
        $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
 
-  (30) $\sim$($\sim$(V12=0), $\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
+  (30) $\sim$($\sim$(V12 = 0), $\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
        $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
 
-  (31) V12=0; $\sim$($\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
+  (31) V12 = 0; $\sim$($\sim$(($\lambda$X.X=1)(V12)), $\sim$(($\lambda$X.X=2)(V12))),
        $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
 
-  (32) V12=0, $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+  (32) V12 = 0, $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
 
   (33) $\sim$($\exists$V4 (($\lambda$X.X=0) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
 
@@ -1236,7 +1236,7 @@ By carefully looking at the trace above, we notice two things:
   \item Now look at the second context of step 35, whose computation commences at step 36. Since its first expression is a higher-order expression, the constructive negation rule will be applied, leading to step 37. By then, it is too late to apply any restriction, because step 38 always succeeds. Therefore, we need to add our restriction in such a way, so that in step 32 there is another subgoal that disproves the \texttt{V12=0} equality, namely:
   \begin{lstlisting}[language=Prolog,%
     frame=single,breaklines=false,mathescape=true]
-  (32) V12=0, $\sim$(V12=0), $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
+  (32) V12 = 0, $\sim$(V12 = 0), $\sim$($\exists$V4 (($\lambda$X.X=V12) $\vee_{\kappa}$ V15)(V4), $\sim$q(V4)) ?
   \end{lstlisting}
 \end{itemize}
 
@@ -1280,13 +1280,13 @@ Notice that now, the \texttt{$\exists$V4} quantification is over the whole goal 
    (9) $\sim$($\sim$(($\lambda$X.X=0)(V6)), $\sim$(($\lambda$X.X=1)(V6)), $\sim$(($\lambda$X.X=2)(V6))),
        $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
 
-  (10) $\sim$($\sim$(V6=0), $\sim$(($\lambda$X.X=1)(V6)), $\sim$(($\lambda$X.X=2)(V6))),
+  (10) $\sim$($\sim$(V6 = 0), $\sim$(($\lambda$X.X=1)(V6)), $\sim$(($\lambda$X.X=2)(V6))),
        $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
 
-  (11) V6=0; $\sim$($\sim$(($\lambda$X.X=1)(V6)), $\sim$(($\lambda$X.X=2)(V6))),
+  (11) V6 = 0; $\sim$($\sim$(($\lambda$X.X=1)(V6)), $\sim$(($\lambda$X.X=2)(V6))),
        $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
 
-  (12) V6=0, $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
+  (12) V6 = 0, $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=V6) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); V6 = V5)) ?
 
   (13) $\sim$($\exists$V5 S<@\textsuperscript{-}@>(($\lambda$X.X=0) $\vee_{\kappa}$ V9)(V5), ($\sim$q(V5); 0 = V5)) ?
 \end{lstlisting}
@@ -1346,13 +1346,13 @@ Notice how at step 21 above, due to the negation, the equality in disjunction be
   (22) $\sim$($\sim$(($\lambda$X.X=0)(V14)), $\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 
-  (23) $\sim$($\sim$(V14=0), $\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+  (23) $\sim$($\sim$(V14 = 0), $\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 
-  (24) V14=0; $\sim$($\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+  (24) V14 = 0; $\sim$($\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 
-  (25) V14=0, not(0 = V14),
+  (25) V14 = 0, not(0 = V14),
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 \end{lstlisting}
 
@@ -1375,13 +1375,13 @@ At this point the implementation will backtrack to step 24 and select the other 
   (25) $\sim$($\sim$(($\lambda$X.X=1)(V14)), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 
-  (26) $\sim$($\sim$(V14=1), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+  (26) $\sim$($\sim$(V14 = 1), $\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 
-  (27) V14=1; $\sim$($\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
+  (27) V14 = 1; $\sim$($\sim$(($\lambda$X.X=2)(V14))), not(0 = V14),
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 
-  (28) V14=1, not(0 = V14),
+  (28) V14 = 1, not(0 = V14),
           $\sim$($\exists$V13 S<@\textsuperscript{-}@>(($\lambda$X.X=V14) $\vee_{\kappa}$ V17)(V13), ($\sim$q(V13); 0 = V13; V14 = V13)) ?
 
   (29) not(0 = 1),
