@@ -319,7 +319,7 @@ then, for the query \msf{p(X)} the answer will be:
 
 In the above example, notice how inequalities can be generated at any point of the computation where a negative literal is encountered. This resembles the constraint logic programming scheme, however simpler, because the restrictions here are only inequalities (\msf{\ne}) and not e.g. \msf{\le} or \msf{\ge}.
 
-Please note that, in the above examples, the format of the final answer is simplified, in order to demonstrate the idea of constructive negation. In reality, a more complex formula is used to negate the disjunction of answers to the positive version of the negated query. Furthermore, in both examples, notice how the positive version of the negated query returns a finite number of answers. How does constructive negation handle the negation of a disjunction of infinite answers? This issue is addressed in \cite{DBLP:conf/slp/Chan89}, where the constructive negation rule is extended to support the negation of infinite answers.
+Please note that the above examples are fairly simple, in order to demonstrate the idea of constructive negation. In reality, a more complex formula is used in order to negate the answers to the positive version of the negated query. Furthermore, in both examples, notice how the positive version of the negated query returns a finite number of answers. How does constructive negation handle the negation of a disjunction of infinite answers? This issue is addressed in \cite{DBLP:conf/slp/Chan89}, where the constructive negation rule is extended to support the negation of infinite answers.
 
 We will not analyse the techniques that are used in \cite{DBLP:conf/iclp/Chan88} and \cite{DBLP:conf/slp/Chan89} in order to apply the constructive negation rule in first-order logic programming. The reader is encouraged to refer to the respective texts. However, we will outline the equivalence that the constructive negation scheme makes use of, in order to negate the answers.
 
@@ -492,7 +492,7 @@ Let \msf{P} be a program. Then, the \emph{completion} \msf{comp(P)} of \msf{P} i
 \label{chap:proof}
 The proof procedure of \hcn{} incorporates and adapts the constructive negation rules, as described by David Chan in \cite{DBLP:conf/slp/Chan89}, to the higher-order case.
 
-Before going into the procedure itself, we give the following definition, which categorises the various inequalities based on the expressions on their left and right hand side (\cite{DBLP:conf/iclp/Chan88}, \cite{DBLP:conf/kr/CharalambidisR14}).
+Before outlining the procedure itself, we give the following definition, which categorises the various inequalities based on the expressions on their left and right hand side (\cite{DBLP:conf/iclp/Chan88}, \cite{DBLP:conf/kr/CharalambidisR14}).
 
 \begin{definition}{}
 \label{def:inequalities}
@@ -674,7 +674,18 @@ In order to extend the constructive negation rule for the higher-order logic pro
 
 Recall equation \ref{eq:cneg}, which outlines the equality theory rule that is applied in constructive negation. This rule works well when first order literals (equalities or inequalities) are selected and is employed in rule 6(d) of definition \ref{def:negreduction}.
 
-When considering the higher-order terms of \h{}, then a more sophisticated version of that formula is required. The reason is that higher-order terms are not ``flat''.
+When considering the higher-order terms of \h{}, then a more sophisticated version of that formula is required. The reason is that higher-order terms are not ``flat''. To understand what that means, let us consider the principal difference between first and higher-order logic programming: the latter allows the usage of uninstantiated predicate variables, which denote sets. Since they denote sets, we would like to express two properties:
+\begin{itemize}
+  \item that an element belongs to a set.
+  \item that an element does not belong to a set.
+\end{itemize}
+The first point is implemented via positive computation logic, while the second point requires negative computation logic. However, the first point may also be the result of a double negation. That is where the constructive negation rule comes into play.
+
+% Consider again equation \ref{eq:cneg} and let's assume that the selected expression (\msf{A_i}) is a higher-order expression, e.g. \msf{R(X)}. This expression asks whether there exists some \msf{X}, such that \msf{X \in R}. Then, the rule in equation \ref{eq:cneg} can be read as follows. Not exists \msf{X, \widehat{Y}} such that \msf{X \in R} and some other goals are true is equivalent to:
+% \begin{itemize}
+%   \item either there doesn't exist any \msf{X} such that \msf{X \in R};
+%   \item or there does exist some \msf{X} such that \msf{X \in R} and there do not exist any \msf{\widehat{Y}} such that some other goals are true.
+% \end{itemize}
 
 (...)
 
@@ -1436,10 +1447,10 @@ This is however not enough, because when the computation backtracks, the inequal
 
 Clearly, another approach is needed in order to avoid the above behaviour. One idea would be, instead of inequalities, to introduce ``greater than'' restrictions for the members of \msf{P}. However, for a complete set of answers to be computed, this would require the completed expression of \msf{q} to be ``sorted''. When talking about numbers, sorting is obvious. However, in the general case that is not true. Furthermore, it is not straight-forward how one would sort the completed expression, as well as how sorting would affect the performance of the implementation.
 
-\chapter{CONCLUSION AND FUTURE WORK}
+\chapter{CONCLUSIONS AND FUTURE WORK}
 \label{chap:conclusion}
 
-\section{Conclusion}
+\section{Conclusions}
 We modified the proof procedure of \hcn{} to make it more implementation-oriented. The new proof procedure avoids the non-termination problem that the previous one encountered when it had to deal with negated higher-order expressions.
 
 We did so by introducing expressions that restrict the new elements of the respective set when applying the constructive negation rule to higher-order predicate expressions. These expressions are essentially inequalities that emulate an $\in$ operator for the set constructed so far.
