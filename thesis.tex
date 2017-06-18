@@ -312,8 +312,8 @@ We first run the positive version of the query, i.e. \msf{p(X)} and obtain the a
 then, for the query \msf{p(X)} the answer will be:
 \begin{lstlisting}[language=Prolog,frame=single]
   ?- p(X).
-  X /= a, X /= b
   yes
+  X /= a, X /= b
 \end{lstlisting}
 \end{example}
 
@@ -321,16 +321,18 @@ In the above example, notice how inequalities can be generated at any point of t
 
 Please note that the above examples are fairly simple, in order to demonstrate the idea of constructive negation. In reality, a more complex formula is used in order to negate the answers to the positive version of the negated query. Furthermore, in both examples, notice how the positive version of the negated query returns a finite number of answers. How does constructive negation handle the negation of a disjunction of infinite answers? This issue is addressed in \cite{DBLP:conf/slp/Chan89}, where the constructive negation rule is extended to support the negation of infinite answers.
 
-We will not analyse the techniques that are used in \cite{DBLP:conf/iclp/Chan88} and \cite{DBLP:conf/slp/Chan89} in order to apply the constructive negation rule in first-order logic programming. The reader is encouraged to refer to the respective texts. However, we will outline the equivalence that the constructive negation scheme makes use of, in order to negate the answers.
+We will not analyse the techniques that are used in \cite{DBLP:conf/iclp/Chan88} and \cite{DBLP:conf/slp/Chan89} in order to apply the constructive negation rule in first-order logic programming. The reader is encouraged to refer to the respective texts. However, we will outline an important equivalence, that the constructive negation scheme makes use of when it encounters equalities, in order to negate the answers. This equivalence is of special importance to us, because it is the one that gets extended in order to apply the constructive negation rule to higher-order variables.
 
-Let the goal list be \msf{A = A_1, \ldots, A_n} and the selected literal be \msf{A_i}. Also, let \msf{A'} be the rest of the goal list except \msf{A_i}, i.e. \msf{A' = A_1, \ldots, A_{i-1}, A_{i+1}, \ldots, A_{n}}. Then, the negation formula is the following:
+Let the goal list be \msf{A = A_1, \ldots, A_n} and the selected expression be \msf{A_i}, where \msf{A_i} is \msf{X=s}. Also, let \msf{A'} be the rest of the goal list except \msf{A_i}, i.e. \msf{A' = A_1, \ldots, A_{i-1}, A_{i+1}, \ldots, A_{n}}. Then, the negation formula is the following:
 
 \begin{equation}\label{eq:cneg}
-  \lnot\exists \textbf{U} \big( \mathsf{A_i} \land \mathsf{A'} \big) ~\equiv~
-  \lnot\exists \textbf{U}_\textbf{1} \mathsf{A_i} \lor \exists \textbf{U}_\textbf{1} \big( \mathsf{A_i} \land \lnot\exists \textbf{U}_\textbf{2} \mathsf{A'} \big)
+  \forall \mathsf{X} \Big(
+    \lnot\exists \textbf{Y, Z} \big( \mathsf{X=s} \land \mathsf{A'} \big) ~\equiv~
+    \lnot\exists \textbf{Y} \left(\mathsf{X=s}\right) \lor \exists \textbf{Y} \big( \mathsf{X=s} \land \lnot\exists \textbf{Z} ~ \mathsf{A'} \big)
+  \Big)
 \end{equation}
 
-where \msf{\textbf{U}_\textbf{1}} are the variables in \msf{\textbf{U}} that are free in \msf{A_i} and \msf{\textbf{U}_\textbf{2}} are the variables in \msf{\textbf{U}} not in \msf{\textbf{U}_\textbf{1}}.
+where \msf{\textbf{Y}} are the variables in \msf{s} and the free variables in \msf{A'} are contained in \msf{\textbf{Y}} and \msf{\textbf{Z}}.
 
 The above formula is implied by the equality theory and is the mathematical formalisation of taking each component from the goal list \msf{A}, negating it and then recombining the components. We will later extend the above formula to apply to higher-order terms.
 
@@ -342,8 +344,47 @@ To better understand why the above formula works, consider the following:
                                           & ~\Leftrightarrow~ \mathsf{\lnot A \lor \left( A \land \lnot B \right)} & (\text{rev. distributive law})
 \end{align*}
 
-(...)
-% The reason the above formula works is twofold. First, it makes no assumption on the type of \msf{A_i}: it could be an equality, an inequality, a literal, etc. Second, it does not require all (possibly infinite) literals that make up \msf{A} to be available at the time of application. Thus, it is a somehow ``lazy'' operator in functional programming terms.
+The reason why Chan selects to use the above formula in \cite{DBLP:conf/iclp/Chan88} when negating equalities is that the \msf{X=s} equality in the second term of the right-hand side of the equivalence may generate some interesting variable bindings that may lead to some extra welcome answers.
+
+\begin{example} Consider the following logic program that defines the \texttt{even} predicate:
+\begin{lstlisting}[language=Prolog,frame=single]
+  even(0).
+  even(s(X)) :- not(even(X)).
+\end{lstlisting}
+\end{example}
+The above program defines a negation-based rule for the \texttt{even} property of natural numbers, which are encoded in the following notation:
+\[
+  \mathsf{s^{n}(0) = n, ~~ n \ge 0}
+\]
+When asked the query:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- even(X).
+\end{lstlisting}
+then using constructive negation, the implementation will answer:
+\begin{lstlisting}[language=Prolog,frame=single]
+  yes
+  X = 0 ;
+
+  yes
+  X = s(V2)
+  V2 /= 0
+  V2 /= s(*V5) ;
+
+  yes
+  X = s(s(0)) ;
+
+  yes
+  X = s(s(s(V10)))
+  V10 /= 0
+  V10 /= s(*V14) ;
+
+  yes
+  X = s(s(s(s(0)))) ;
+
+  ...
+\end{lstlisting}
+The second and the fourth answers above give a format for \texttt{X} along with some restrictions for some variables and they result from the constructive negation rule in equation \ref{eq:cneg}. For example, the second answer says that \texttt{X} is \texttt{s(V2)}, but \texttt{V2} is neither \texttt{0} nor \texttt{s(V5)}, for all \texttt{V5} (the star universally quantifies the following variable).
+
 
 \section{Extensional Higher-Order Logic Programming}
 Extensional higher-order logic programming was first proposed by Charalambidis et al. in \cite{DBLP:journals/tocl/CharalambidisHRW13} as an extension of classical, first-order logic programming. By looking at the name of this paradigm, we can see that it is made up of two terms: \emph{extensional} and \emph{higher-order}.
