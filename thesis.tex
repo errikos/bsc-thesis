@@ -57,7 +57,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%% User-specific configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\setcounter{tocdepth}{1}
+% \setcounter{tocdepth}{1}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%% User-specific configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,7 +223,20 @@ What makes the above program powerful, is the ability to write the first rule, w
 If we try and think of how we would write the same program in a positive logic, then we would normally have to check whether every element of \msf{P} also exists in \msf{Q}. Namely, for all \msf{X \in P}, is \msf{Q(X)} true? This is considerably harder to express, because it involves iterating through \msf{P} (in some way). However, the problem is way more easy to express in a negative logic: \msf{P} is a subset of \msf{Q} if there doesn't exist any \msf{X}, such that \msf{X} is in \msf{P} but not in \msf{Q}.
 \end{example}
 
-(...)
+The most common logic approach when it comes to negation in logic programming is negation as failure. Unfortunately, due to its nature, negation as failure does not provide variable bindings for a negated query. We would like an approach that, given a negated query, it returns variable bindings (or inequalities). Constructive negation does exactly that. In the example above, notice that if the \texttt{not(non\_subset)} subgoal could not provide variable bindings, it would be impossible to answer the \texttt{subset} query.
+
+The above example lays solid ground for solving generate and test type of problems. Suppose that we have a collection of objects that we want to test against some property. The \texttt{subset} predicate could serve as the generator of sets of objects that we want to test and will prove of special importance in the rest of the thesis. What we want, is to successfully implement the proof procedure that will give the correct answers to queries in programs like the one in example \ref{ex:subset}.
+
+\subsection*{Preference-based queries}
+The above paradigm can be applied to another interesting class of applications. An interpreter that supports higher-order predicates in conjunction with constructive negation is a system that can potentially answer preference-based queries.
+
+Imagine that there is a collection of books, each of which costs a certain amount of money. Imagine that you have decided that you want to buy three books for your summer holidays and you really want them to be detective novels. However, you can only spend a limited amount of money for books, say \msf{X}. Therefore, you would like to buy three detective novels that do not exceed amount \msf{X} in cost.
+
+Notice the order of preferences above. The first is the genre. You absolutely enjoy reading detective novels while on the beach. The price comes second. This order of preferences may, depending on the collection of books, force you to buy less than three books (in case there are not enough books of the selected genre in the collection).
+
+The above problem can be reduced to the selection of the subsets of a collection of books that satisfy the imposed preferences. Those preferences over sets can be expressed more elegantly and more efficiently in an extensional higher-order language with constructive negation \cite{DBLP:conf/ppdp/CharalambidisRT16}.
+
+In extensional languages, two sets that contain the same elements are considered equal. Working with sets in an extensional way is one of the main motivating points that led to the creation of \h{}. Working with and stating set preferences is one of the main motivating points that led to the creation of \hcn{}.
 
 \section{Thesis Structure}
 The rest of this thesis is organised as follows. Chapter \ref{chap:background} provides some background on the essential terms of negation as failure, constructive negation and higher-order logic programming. In chapter \ref{chap:hcn} the higher-order logic programming language \hcn{} is defined. In chapter \ref{chap:proof} the rules that make up the proof procedure of \hcn{} are outlined and the problem that makes the implementation challenging is identified and presented. Chapter \ref{chap:approach} shows the proposed approach to overcome the problem and outlines possible limitations. Finally, chapter \ref{chap:conclusion} concludes the thesis and outlines the various possibilities for future work.
