@@ -1472,6 +1472,49 @@ In step 33 above, a third restriction is placed, in order to restrict the possib
 
 The above procedure will continue until all possible combinations of valid values for the members of \texttt{P} have been checked. It is also obvious that the above procedure terminates, since the completed definition of \msf{q} is finite and every value from the previous that is added to \texttt{P} is different from the values added before it.
 
+\section{Solving generate and test problems}
+The modified proof procedure allows us to easily select elements from a collection of objects. This enables us to solve generate and test problems fairly easily.
+
+\begin{example} Consider the following logic program:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  twocolor(G, R) :- subset(R, vertex_set(G)),
+                    not(non_twocolor(G, R)).
+
+  vertex_set(G)(X) :- G(X, _).
+  vertex_set(G)(X) :- G(_, X).
+
+  non_twocolor(G, R) :- G(X, Y), R(X), R(Y).
+  non_twocolor(G, R) :- G(X, Y), not(R(X)), not(R(Y)).
+\end{lstlisting}
+The above program defines the \texttt{twocolor} predicate, which is true if \texttt{R} is a subset of the vertices of a graph \texttt{G} that can be painted with the same colour in a two-colouring of \texttt{G}. Note that in order to exist a valid two-coloring for a graph, we must be able to paint each pair of vertices consisting an edge with different colors.
+
+The \texttt{twocolor} predicate first enumerates all subsets of vertices of \texttt{G} and then tests whether they can be painted with the same colour. The \texttt{vertex\_set} predicate returns a set with all the vertices of \texttt{G}.
+
+The \texttt{non\_twocolor} predicate is interesting. It states that the set of vertices \texttt{R} of graph \texttt{G} cannot be painted with the same colour, if there exist some vertices \texttt{X} and \texttt{Y}, such that \texttt{X} and \texttt{Y} are adjacent in \texttt{G} and both \texttt{X} and \texttt{Y} are in \texttt{R}. Alternatively, vertices in \texttt{R} cannot be painted with the same colour, if there exist some vertices \texttt{X} and \texttt{Y}, such that \texttt{X} and \texttt{Y} are adjacent in \texttt{G} and neither of them is in \texttt{R} (because then there would not be enough colours remaining to paint \texttt{X} and \texttt{Y}).
+
+If we have the following simple definition for a graph:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  graph(a, b).
+  graph(b, c).
+\end{lstlisting}
+
+Then the answers to the following query would be:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  ?- two_color(graph, R).
+
+  yes
+  R = { b } ;
+
+  yes
+  R = { a, c } ;
+
+  no
+\end{lstlisting}
+\end{example}
+
 \section{Limitations}
 \label{section:limitations}
 While the approach outlined in the previous sections fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
