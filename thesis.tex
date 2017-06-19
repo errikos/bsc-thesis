@@ -1297,7 +1297,10 @@ By carefully looking at the trace above, we notice two things:
 \begin{itemize}
   \item Look that the expression \texttt{(($\lambda$X.X=0) $\vee_{\kappa}$ V15)} at step 28.
 
-  This expression occurs from the substitution of variable \texttt{V8} at step 27. The path that is due to the lambda expression within the above expression (that is, the first context in step 35) contributes nothing to the computation. This is because in step 32, \texttt{V12} is being assigned a value from the completed definition of \msf{q} and then the aforementioned path essentially asks whether the resulting expression is true for \msf{q} (look at steps 15-21 for a detailed sequence of steps). Of course, that is always true. We will utilise this property in our modified procedure (we will essentially trim that path, recall definition \ref{def:trimmedsub} -- trimmed substitution).
+  This expression occurs from the substitution of variable \texttt{V8} at step 27. The path that is due to the lambda expression within the above expression (that is, the first context in step 35) contributes nothing to the computation. This is because in step 32, \texttt{V12} is being assigned a value from the completed definition of \msf{q} and then the aforementioned path essentially asks whether the resulting expression is true for \msf{q} (look at steps 15-21 for a detailed sequence of steps). Of course, that is always true. We utilise this property in our modified procedure (we essentially trim that path, recall definition \ref{def:trimmedsub} -- trimmed substitution).
+
+  The reason for trimming the aforementioned path is because, along with our introduced restrictions, it caused our modified procedure to fail. Since it contribues nothing to the computation, we can safely trim it.
+
   \item Now look at the second context of step 35, whose computation commences at step 36. Since its first expression is a higher-order expression, the constructive negation rule will be applied, leading to step 37. By then, it is too late to apply any restriction, because step 38 always succeeds. Therefore, we need to add our restriction in such a way, so that in step 32 there is another subgoal that disproves the \texttt{V12=0} equality, namely:
   \begin{lstlisting}[language=Prolog,%
     frame=single,breaklines=false,mathescape=true]
