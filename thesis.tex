@@ -344,7 +344,7 @@ To better understand why the above formula works, consider the following:
                                           & ~\Leftrightarrow~ \mathsf{\lnot A \lor \left( A \land \lnot B \right)} & (\text{rev. distributive law})
 \end{align*}
 
-The reason why Chan selects to use the above formula in \cite{DBLP:conf/iclp/Chan88} when negating equalities is that the \msf{X=s} equality in the second term of the right-hand side of the equivalence may generate some interesting variable bindings that may lead to some extra welcome answers.
+The reason why Chan decides to use the above formula in \cite{DBLP:conf/iclp/Chan88} when negating equalities is that the \msf{X=s} equality in the second term of the right-hand side of the equivalence may generate some interesting variable bindings that may lead to some extra welcome answers.
 
 \begin{example} Consider the following logic program that defines the \texttt{even} predicate:
 \begin{lstlisting}[language=Prolog,frame=single]
@@ -383,7 +383,7 @@ then using constructive negation, the implementation will answer:
 
   ...
 \end{lstlisting}
-The second and the fourth answers above give a format for \texttt{X} along with some restrictions for some variables and they result from the constructive negation rule in equation \ref{eq:cneg}. For example, the second answer says that \texttt{X} is \texttt{s(V2)}, but \texttt{V2} is neither \texttt{0} nor \texttt{s(V5)}, for all \texttt{V5} (the star universally quantifies the following variable).
+The second and the fourth answers above give a format for \texttt{X} along with some restrictions for some variables and they result from the constructive negation rule in equation \ref{eq:cneg}. For example, the second answer says that \texttt{X} is of the form \texttt{s(V2)}, but \texttt{V2} is neither \texttt{0} nor \texttt{s(V5)}, for all \texttt{V5} (the star universally quantifies the following variable).
 
 
 \section{Extensional Higher-Order Logic Programming}
@@ -1523,8 +1523,8 @@ Consider the following logic program:
   clique(G, R) :- subset(R, vertex_set(G)),
                   not(non_clique(G, R)).
 
-  vertex_set(G)(X) :- graph(X, Y).
-  vertex_set(G)(X) :- graph(Y, X).
+  vertex_set(G)(X) :- graph(X, _).
+  vertex_set(G)(X) :- graph(_, X).
 
   non_clique(G, R) :- R(X), R(Y), not(G(X, Y)), not(G(Y, X)).
 \end{lstlisting}
