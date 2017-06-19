@@ -1475,7 +1475,8 @@ The above procedure will continue until all possible combinations of valid value
 \section{Solving generate and test problems}
 The modified proof procedure allows us to easily select elements from a collection of objects. This enables us to solve generate and test problems fairly easily.
 
-\begin{example} Consider the following logic program:
+\begin{example} \label{ex:twocolor}
+Consider the following logic program:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
   twocolor(G, R) :- subset(R, vertex_set(G)),
@@ -1493,14 +1494,14 @@ The \texttt{twocolor} predicate first enumerates all subsets of vertices of \tex
 
 The \texttt{non\_twocolor} predicate is interesting. It states that the set of vertices \texttt{R} of graph \texttt{G} cannot be painted with the same colour, if there exist some vertices \texttt{X} and \texttt{Y}, such that \texttt{X} and \texttt{Y} are adjacent in \texttt{G} and both \texttt{X} and \texttt{Y} are in \texttt{R}. Alternatively, vertices in \texttt{R} cannot be painted with the same colour, if there exist some vertices \texttt{X} and \texttt{Y}, such that \texttt{X} and \texttt{Y} are adjacent in \texttt{G} and neither of them is in \texttt{R} (because then there would not be enough colours remaining to paint \texttt{X} and \texttt{Y}).
 
-If we have the following simple definition for a graph:
+If we have the following simple definition for a (undirected) graph:
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
   graph(a, b).
   graph(b, c).
 \end{lstlisting}
 
-Then the answers to the following query would be:
+Then the answers to the following query would be (not necessarily in the indicated order):
 \begin{lstlisting}[language=Prolog,%
   frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
   ?- two_color(graph, R).
@@ -1515,9 +1516,61 @@ Then the answers to the following query would be:
 \end{lstlisting}
 \end{example}
 
+\begin{example} \label{ex:clique}
+Consider the following logic program:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  clique(G, R) :- subset(R, vertex_set(G)),
+                  not(non_clique(G, R)).
+
+  vertex_set(G)(X) :- graph(X, Y).
+  vertex_set(G)(X) :- graph(Y, X).
+
+  non_clique(G, R) :- R(X), R(Y), not(G(X, Y)), not(G(Y, X)).
+\end{lstlisting}
+The above program defines the \texttt{clique} predicate, which is true if \texttt{R} is a subset of the vertices of a graph \texttt{G} that form a subgraph of \texttt{G}, which is a clique (every vertex is connected to every other vertex in the set).
+
+Notice that the main skeleton of the program is the same as in example \ref{ex:twocolor}. We only added the \texttt{non\_clique} predicate definition, which simply states that a subset of the vertices of a graph \texttt{G} is not a clique if there exist two nodes \texttt{X} and \texttt{Y} in \texttt{G}, such that there is no edge between them.
+
+Suppose that we have the following simple definition for a (undirected) graph:
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  graph(a, b).
+  graph(b, c).
+  graph(c, a).
+\end{lstlisting}
+which is know as \msf{K_3} (the complete graph with 3 vertices).
+
+Then the answers to the following query would be (not necessarily in the indicated order):
+\begin{lstlisting}[language=Prolog,%
+  frame=single,breaklines=false,mathescape=true,escapeinside={<@}{@>}]
+  ?- clique(graph, R).
+
+  yes
+  R = { a } ;
+
+  yes
+  R = { a, b } ;
+
+  yes
+  R = { b } ;
+
+  yes
+  R = { b, c } ;
+
+  yes
+  R = { c } ;
+
+  yes
+  R = { a, b, c } ;
+
+  no
+\end{lstlisting}
+\end{example}
+
 \section{Limitations}
 \label{section:limitations}
-While the approach outlined in the previous sections fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
+While the approach outlined in the previous sections fixes the problem of non-termination when there exist higher-order negative expressions in the goal list, it stills produces duplicate answers, in the sense that it may return the same set more than once, with its elements in different order. This would normally cause the queries in the examples \ref{ex:twocolor} and \ref{ex:clique} to return the same answer more than once. However, this is a different and more fundamental problem, which is out of the scope of this thesis.
 
 To understand why this problem exists, consider again the \texttt{subset} trace (example \ref{ex:subsettrace}). Every time that the negation rule is applied on the expression that extends \msf{P}, normally the definition of predicate \msf{q} is inserted into the computation. The completed definition of \msf{q} is always the same and the implementation has to choose one of the possible values (in example \ref{ex:subsettrace} the possible values are \msf{0}, \msf{1} or \msf{2}). Our modified rule inserts inequalities in order to restrict the new value to be different from any previous value.
 
