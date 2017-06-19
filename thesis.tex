@@ -1611,12 +1611,21 @@ A prototype implementation of the above modified procedure can be found at the f
 \section{Conclusions}
 We modified the proof procedure of \hcn{} to make it more implementation-oriented. The new proof procedure avoids the non-termination problem that the previous one encountered when it had to deal with negated higher-order expressions.
 
-We did so by introducing expressions that restrict the new elements of the respective set when applying the constructive negation rule to higher-order predicate expressions. These expressions are essentially inequalities that emulate an $\in$ operator for the set constructed so far.
+We did so by introducing expressions that restrict the new elements of the respective set when applying the constructive negation rule to higher-order predicate expressions. These expressions are essentially inequalities which are handled by the proof procedure itself and emulate an $\in$ operator for the set constructed so far.
 
 \section{Future work}
+\subsection*{Avoiding multiple answers}
 While the modified proof procedure allows the implementation to find the correct paths in the computation tree, there is still room for improvement. One issue that has to be tackled is that the same answer may be returned multiple times, with its terms re-ordered (see ``Limitations'' -- section \ref{section:limitations}). This may require extra restrictions placed in the proof procedure rules, as well as a different order of evaluation of program predicates.
 
 One may argue that, since the arrangement of terms differs, the answers are not the same. However, recall that in \hcn{}, predicates represent sets, which normally have no ordering. Therefore, in order to be compatible with the language semantics, an implementation ideally shall not return multiple answers.
+
+\subsection*{Employing CLP techniques in \hcn{}}
+While looking for possible solutions to the problem that this paper tries to address, one particular scheme kept coming forward. In every step made towards solving the problem, there was always the thought that everything would possibly be simpler if constraint logic programming (CLP) techniques were employed in order to restrict variable values.
+
+Indeed, the concept of CLP seems to very compatible with the semantics of \hcn{}. This is mainly due to the nature of constructive negation, which in addition to variable assignments, also generates inequalities. Handling these inequalities the way a CLP language does, could have multiple benefits for the implementation and this idea deserves further investigation.
+
+\subsection*{Warren Abstract Machine for \hcn{}}
+Recently, work has been done in extending the Warren Abstract Machine in order to implement higher-order logic programming languages \cite{1324952}. It would be really interesting to use the extended WAM definition in order to implement \hcn{} and see how constructive negation behaves in that case.
 
 \backmatter
 
