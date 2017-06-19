@@ -1602,6 +1602,9 @@ This is however not enough, because when the computation backtracks, the inequal
 
 Clearly, another approach is needed in order to avoid the above behaviour. One idea would be, instead of inequalities, to introduce ``greater than'' restrictions for the members of \msf{P}. However, for a complete set of answers to be computed, this would require the completed expression of \msf{q} to be ``sorted''. When talking about numbers, sorting is obvious. However, in the general case that is not true. Furthermore, it is not straight-forward how one would sort the completed expression, as well as how sorting would affect the performance of the implementation.
 
+\section{Implementation}
+A prototype implementation of the above modified procedure can be found at the following GitHub repository: \url{https://github.com/errikos/hopes}. The aforementioned implementation is in essence the same with Angelos Charalambidis' implementation, with minor changes to reflect the modified procedure. It is written in Haskell, which is provably the most appropriate language to implement interpreters for languages whose definition is given via ``rules'', like the case with \hcn{}.
+
 \chapter{CONCLUSIONS AND FUTURE WORK}
 \label{chap:conclusion}
 
