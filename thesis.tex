@@ -127,7 +127,7 @@
 
     Μια γλώσσα λογικού προγραμματισμού υψηλής τάξης με όνομα HOPES (\h{}) έχει προταθεί πρόσφατα. Η γλώσσα αυτή έχει επαυξηθεί με κατασκευαστική άρνηση για να διαμορφωθεί η γλώσσα \hcn{} (HOPES with constructive negation).
 
-    Ενώ η σημασιολογία της \hcn{} είναι καλά ορισμένη, η υλοποίηση ενός συστήματος λογικού προγραμματισμού (διερμηνευτή) για την τελευταία αποδείχθηκε μια πραγματική πρόκληση. Ο λόγος είναι πως η διαδικασία απόδειξης της \hcn{} δεν υποδεικνύει κανέναν συγκεκριμένο τρόπο επιλογής του επόμενου στόχου για ικανοποίηση. Δείχνουμε πως, ενώ ορισμός της γλώσσας εγγυάται την ύπαρξη μονοπατιών στο δέντρο απόδειξης, τα οποία οδηγούν σε σωστές λύσεις, εάν μια απλοϊκή πολιτική επιλογής (π.χ. η επιλογή πάντα του αριστερότερου υποστόχου, όπως κάνει η PROLOG) έχει υιοθετηθεί, τότε πρέπει να παρθούν επιπλέον μέτρα έτσι ώστε η υλοποίηση να αποφύγει μονοπάτια τα οποία δεν θα οδηγήσουν ποτέ σε σωστές λύσεις.
+    Ενώ η σημασιολογία της \hcn{} είναι καλά ορισμένη, η υλοποίηση ενός συστήματος λογικού προγραμματισμού (διερμηνευτή) για την τελευταία αποδείχθηκε δυσκολότερη υπόθεση απ'ότι αναμενόταν. Ο λόγος είναι πως η διαδικασία απόδειξης της \hcn{} δεν υποδεικνύει κανέναν συγκεκριμένο τρόπο επιλογής του επόμενου στόχου για ικανοποίηση. Δείχνουμε πως, ενώ ορισμός της γλώσσας εγγυάται την ύπαρξη μονοπατιών στο δέντρο απόδειξης, τα οποία οδηγούν σε σωστές λύσεις, εάν μια απλοϊκή πολιτική επιλογής (π.χ. η επιλογή πάντα του αριστερότερου υποστόχου, όπως κάνει η PROLOG) έχει υιοθετηθεί, τότε πρέπει να παρθούν επιπλέον μέτρα έτσι ώστε η υλοποίηση να αποφύγει μονοπάτια τα οποία δεν θα οδηγήσουν ποτέ σε σωστές λύσεις.
 
     Η συνεισφορά αυτής της πτυχιακής έγκειται στον επαναορισμό κάποιων εκ των κανόνων της διαδικασίας απόδειξης της \hcn{}. Δείχνουμε ότι η νέα διαδικασία απόδειξης επιτρέπει την υλοποίηση ενός διερμηνευτή για την \hcn{}, o οποίος ακολουθεί τον κανόνα της PROLOG για επιλογή του πάντα αριστερότερου υποστόχου και παράλληλα συμπεριφέρεται σωστά (δίνει σωστές λύσεις μόνο) για κάθε επερώτηση.
   \end{greek}
@@ -144,7 +144,7 @@
 
   During the process of selecting and taking up a thesis subject, I encountered many interesting topics and had discussions with many professors. I would like to thank them all for their patience, cooperation and tips.
 
-  The reason for selecting the current subject was that it was fascinating at first sight. I was no stranger to classical logic programming, however the concept of higher-order logic programming was something new for me.
+  The reason for selecting the current subject was that it was fascinating at first sight. I was no stranger to classical logic programming or high-order programming paradigms (e.g. Haskell), however it was the first time I encountered a combination of them.
 
   \hcn{} is a really expressive language. Its higher-order semantics allow one to write even some of the most complex predicates in a very elegant fashion. Of course the main property that enables such elegance is constructive negation, which is the principal feature of \hcn{}.
 
