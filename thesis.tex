@@ -1505,7 +1505,7 @@ The extended constructive negation rule is applied again and the first path of t
 
 In step 33 above, a third restriction is placed, in order to restrict the possible values for the fourth member of \texttt{P}. Since the third member will be selected to be \texttt{2}, there is no possible value for the fourth member, so there will be no fourth member. The implementation will backtrack and will try to find an alternative value for the second member, then try to recompute a third element, etc.
 
-The above procedure will continue until all possible combinations of valid values for the members of \texttt{P} have been checked. It is also obvious that the above procedure terminates, since the completed definition of \msf{q} is finite and every value from the previous that is added to \texttt{P} is different from the values added before it.
+The above procedure will continue until all possible combinations of valid values for the members of \texttt{P} have been checked. It is also obvious that the above procedure terminates, since the completed definition of \msf{q} is finite and every value from the latter that is added to \texttt{P} is different from the values added before it.
 
 \section{Solving generate and test problems}
 The modified proof procedure allows us to easily select elements from a collection of objects. This enables us to solve generate and test problems fairly easily.
