@@ -723,29 +723,28 @@ The above bracket-notion is just a short (or pretty-print) version of the follow
 \begin{center}
   \msf{P = a ~\bigvee_{\pi}~ \big( b ~\bigvee_{\pi}~ \big( c ~\bigvee_{\pi}~ L \big) \big)}
 \end{center}
-
 \end{example}
 
 In order to extend the constructive negation rule for the higher-order logic programming language \h{}, we have to keep in mind that we are also dealing with higher-order (set) variables like in the example above.
 
-Recall equation \ref{eq:cneg}, which outlines the equality theory rule that is applied in constructive negation. This rule works well when first order literals (equalities or inequalities) are selected and is employed in rule 6(d) of definition \ref{def:negreduction}.
+Recall equation \ref{eq:cneg}, which outlines the equality theory rule that is applied in constructive negation. This rule works well when first order literals (equalities or inequalities) are selected and is employed in rule 6 (d) of definition \ref{def:negreduction}.
 
 When considering the higher-order terms of \h{}, then a more sophisticated version of that formula is required. The reason is that higher-order terms are not ``flat''. To understand what that means, let us consider the principal difference between first and higher-order logic programming: the latter allows the usage of uninstantiated predicate variables, which denote sets. Since they denote sets, we would like to express two properties:
 \begin{itemize}
   \item that an element belongs to a set.
   \item that an element does not belong to a set.
 \end{itemize}
-The first point is implemented via positive computation logic, while the second point requires negative computation logic. However, the first point may also be the result of a double negation. That is where the constructive negation rule comes into play.
+The first point is implemented via positive computation logic, while the second point requires negative computation logic. Furthermore, the first point may also be the result of the application of double negation.
 
-% Consider again equation \ref{eq:cneg} and let's assume that the selected expression (\msf{A_i}) is a higher-order expression, e.g. \msf{R(X)}. This expression asks whether there exists some \msf{X}, such that \msf{X \in R}. Then, the rule in equation \ref{eq:cneg} can be read as follows. Not exists \msf{X, \widehat{Y}} such that \msf{X \in R} and some other goals are true is equivalent to:
-% \begin{itemize}
-%   \item either there doesn't exist any \msf{X} such that \msf{X \in R};
-%   \item or there does exist some \msf{X} such that \msf{X \in R} and there do not exist any \msf{\widehat{Y}} such that some other goals are true.
-% \end{itemize}
+What the implementation is supposed to do when it encounters a higher-order (predicate) variable, is to perform a systematic enumeration of the possible values that variable can take. The variable itself represents a set, therefore the implementation must be able to generate multiple values that ``belong'' to the set that the variable represents.
 
-(...)
+Suppose that a negated expression (goal list) \msf{B} contains the subgoal \msf{(R ~ E)}, where \msf{R} is a predicate variable and \msf{E} is an expression. The way \msf{R} will be constructed is by first adding variables to it and then producing bindings for those variables. It is clear that the formula in equation \ref{eq:cneg} is not enough to add multiple values to \msf{R}, because the two terms of the conjunction will argue about whether \msf{E}, and only \msf{E}, belongs or not to the set.
 
-The above described behaviour is implemented by rules 7, 10 and 11 of definition \ref{def:negreduction}.
+What we would like to do is to continue arguing about more variables, i.e. try to satisfy the rest of the goal list if \msf{R} contained more variables. In essence, what we want to do is, after having argued about \msf{R} containing \msf{E}, to argue about \msf{R} not containing anything else or \msf{R} containing one more element. If in every step we repeat this process, we can argue about \msf{R} containing as many elements as it can.
+
+The above idea translates to appending \msf{B} (the negated expression) itself in conjunction with the second term of the disjunction in rule \ref{eq:cneg}. This is the approach that \hcn{} takes and is reflected in rules \ref{def:negreduction}.7 (b), \ref{def:negreduction}.10 (b) and \ref{def:negreduction}.11 (b). Notice however, that this approach automatically makes the rule (i.e. the procedure) recursive. And, as we know, for a recursive procedure to stop at some point, there has to be some condition that, when satisfied, stops it. The above procedure seems to have none. We analyse this issue further in the next section.
+
+Notice however that, theoretically, the above procedure is perfectly fine, because the rules do not make any assumption about the expression selection policy. There exist paths in the computation tree that ``escape'' from the infinite recursion and a non-deterministic policy may follow these paths. The problem is that when it comes to implementing things (writing algorithms), we cannot employ non-deterministic strategies.
 
 \section{Identifying the Problem}
 While being theoretically correct, the above approach does not work if implemented blindly. The reason is the repeated subgoal \msf{B}. As discussed earlier, when a higher-order variable \msf{R} is encountered, \msf{B} is re-added to the goal list in order to explore whether \msf{R} can contain extra elements. However, notice that \msf{B} is repeated exactly ``as is'', without any care being taken in order to restrict the new values that are to be added to \msf{R}.
