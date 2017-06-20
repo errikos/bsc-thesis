@@ -402,13 +402,31 @@ The second and the fourth answers above give a format for \texttt{X} along with 
 
 
 \section{Extensional Higher-Order Logic Programming}
-Extensional higher-order logic programming was first proposed by Charalambidis et al. in \cite{DBLP:journals/tocl/CharalambidisHRW13} as an extension of classical, first-order logic programming. By looking at the name of this paradigm, we can see that it is made up of two terms: \emph{extensional} and \emph{higher-order}.
+Extensional higher-order logic programming has been recently proposed by Charalambidis et al. in \cite{DBLP:journals/tocl/CharalambidisHRW13} as an extension of classical, first-order logic programming. The principal idea in higher-order logic programming is that program predicates denote sets of objects and one can reason about such sets, i.e. use them in rules and facts. By looking at the name of this paradigm, we can see that it is made up of two terms: \emph{extensional} and \emph{higher-order}.
 
-The term \emph{higher-order} refers to the capability of applying and passing around predicates and predicate variables as parameters. This is the most popular feature of higher-order logic programming languages like HiLog.
+The term \emph{higher-order} refers to the capability of applying and passing around predicates and predicate variables as parameters. This is the most popular feature of higher-order logic programming languages like HiLog and allows for the sets-based reasoning that was mentioned above.
 
-The term \emph{extensional} refers to the way program predicates can be passed and used, or otherwise, to what makes up a predicate or what a predicate really is. In an extensional language, two predicates are considered to be equal (i.e. the same) if they are true for the same set of arguments. The opposite of this term is \emph{intentional} and in languages belonging to this category, predicates are more than just a set of arguments for which they are true (e.g. they are also discriminated by their name).
+The term \emph{extensional} refers to the way program predicates can be passed and used, or otherwise, to what makes up a predicate or what a predicate really is. In an extensional language, two predicates are considered to be equal (i.e. the same) if they are true for the same set of arguments. The opposite of this term is \emph{intentional} and in languages belonging to this category (e.g. HiLog), predicates are more than just a set of arguments for which they are true (e.g. they are also discriminated by their name).
 
-(...)
+The difference between intensionality and extensionality is a foundamental one and, while at first sight intensionality may seem more natural for real world relations, extensionality better materialises our mathematical definition of what a relation is. To better understand the above, consider an example from \cite{DBLP:journals/tocl/CharalambidisHRW13}.
+
+\begin{example} Consider the predicate \texttt{all\_members(L, P)}, which is true if all elements of a list \texttt{L} have property \texttt{P}:
+\begin{lstlisting}[language=Prolog,frame=single]
+  all_members([], P).
+  all_members([H|T], P) :- P(H), all_members(T, P).
+\end{lstlisting}
+
+If there exist two predicates \texttt{p} and \texttt{q} in our program that are true for exactly the same terms, e.g. the terms \texttt{a}, \texttt{b} and \texttt{c}, then we would expect both the following queries to succeed:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- all_members([a,b,c], p).
+  yes
+
+  ?- all_members([a,b,c], q).
+  yes
+\end{lstlisting}
+However, this is not guaranteed under the context of an intensional language.
+\end{example}
+
 
 The notions of extensional higher-order logic programming and constructive negation proved to be very compatible and, based on that observation, the \hcn{} language was created \cite{DBLP:conf/kr/CharalambidisR14}.
 
