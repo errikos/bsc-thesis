@@ -730,7 +730,7 @@ Definition \ref{def:negreduction} is the most complex of the three definitions t
 \end{definition}
 
 \section{Extending constructive negation for \h{}}
-Recall that predicates in \h{} represent sets. In \h{}, a set is constructed via the $\bigvee_{\pi}$ operator, (of type $\pi \rightarrow \pi \rightarrow \pi$) which is a very primitive version of the set union operator ($\cup$).
+Recall that predicates in \h{} represent sets. In \h{}, a set is constructed via the $\bigvee_{\pi}$ operator, (of type $\pi \rightarrow \pi \rightarrow \pi$) which is a primitive and generalised version of the set union operator ($\cup$).
 
 \begin{example} Lets assume that a predicate \msf{P} in a program is true for the atoms \msf{a}, \msf{b} and \msf{c}. Therefore, it represents the following set that contains (at least) \msf{a}, \msf{b} and \msf{c}:
 \begin{center}
@@ -745,7 +745,7 @@ The above bracket-notion is just a short (or pretty-print) version of the follow
 
 In order to extend the constructive negation rule for the higher-order logic programming language \h{}, we have to keep in mind that we are also dealing with higher-order (set) variables like in the example above.
 
-Recall equation \ref{eq:cneg}, which outlines the equality theory rule that is applied in constructive negation. This rule works well when first order literals (equalities or inequalities) are selected and is employed in rule 6 (d) of definition \ref{def:negreduction}.
+Recall equation \ref{eq:cneg}, which outlines the rule that is applied in constructive negation, when negating equality subgoals. This rule works well when first order literals (equalities or inequalities) are selected and is employed in rule 6(d) of definition \ref{def:negreduction}. We now want to extend this rule to support higher-order predicate variables. The reason why we extend the aforementioned rule is because it is the rule that handles equalities. In the higher-order case, the analogous of an equality, is an element belonging to a set.
 
 When considering the higher-order terms of \h{}, then a more sophisticated version of that formula is required. The reason is that higher-order terms are not ``flat''. To understand what that means, let us consider the principal difference between first and higher-order logic programming: the latter allows the usage of uninstantiated predicate variables, which denote sets. Since they denote sets, we would like to express two properties:
 \begin{itemize}
@@ -1620,7 +1620,7 @@ This is however not enough, because when the computation backtracks, the inequal
 Clearly, another tweak is necessary in order to avoid the above behaviour. One idea would be, instead of inequalities, to introduce ``greater than'' restrictions for the members of \msf{P}. However, for a complete set of answers to be computed, this would require the completed expression of \msf{q} to be ``sorted''. When talking about numbers, sorting is obvious. However, in the general case that is not true. Furthermore, it is not straight-forward neither how one would sort the completed expression, nor how sorting would affect the performance of the implementation.
 
 \section{Implementation}
-A prototype implementation of the above modified procedure can be found at the following GitHub repository: \url{https://github.com/errikos/hopes}. The aforementioned implementation is in essence the same with Angelos Charalambidis' implementation, with minor changes to reflect the modified procedure. It is written in Haskell, which is provably the most appropriate language to implement interpreters for languages whose definition is given via ``rules'', like the case with \hcn{}.
+A prototype implementation of the above modified procedure can be found at the following GitHub repository: \url{https://github.com/errikos/hopes} (branch \texttt{cn\_restrict}). The aforementioned implementation is in essence the same with Angelos Charalambidis' implementation, with minor changes to reflect the modified procedure. It is written in Haskell, which is provably the most appropriate language to implement interpreters for languages whose definition is given via ``rules'', like the case with \hcn{}.
 
 \chapter{CONCLUSIONS AND FUTURE WORK}
 \label{chap:conclusion}
