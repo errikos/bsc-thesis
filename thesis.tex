@@ -408,7 +408,7 @@ The term \emph{higher-order} refers to the capability of applying and passing ar
 
 The term \emph{extensional} refers to the way program predicates can be passed and used, or otherwise, to what makes up a predicate or what a predicate really is. In an extensional language, two predicates are considered to be equal (i.e. the same) if they are true for the same set of arguments. The opposite of this term is \emph{intentional} and in languages belonging to this category (e.g. HiLog), predicates are more than just a set of arguments for which they are true (e.g. they are also discriminated by their name).
 
-The difference between intensionality and extensionality is a foundamental one and, while at first sight intensionality may seem more natural for real world relations, extensionality better materialises our mathematical definition of what a relation is. To better understand the above, consider an example from \cite{DBLP:journals/tocl/CharalambidisHRW13}.
+The difference between intensionality and extensionality is a foundamental one and, while at first sight intensionality may seem more natural for real world relations, extensionality better materialises our mathematical definition of what a relation is. To better understand the above, consider the following example from \cite{DBLP:journals/tocl/CharalambidisHRW13}.
 
 \begin{example} Consider the predicate \texttt{all\_members(L, P)}, which is true if all elements of a list \texttt{L} have property \texttt{P}:
 \begin{lstlisting}[language=Prolog,frame=single]
@@ -437,7 +437,7 @@ The notions of extensional higher-order logic programming and constructive negat
 The reader is presumed to be familiar with the basic concepts and definitions of classical Logic Programming \cite{Lloyd:1987:FLP:39279}. For example, the concepts \textbf{term}, \textbf{formula}, \textbf{atom}, \textbf{(program) clause} and \textbf{goal} are defined as in classical Logic Programming, with slight extensions on their definitions where necessary.
 
 \section{Basic Definitions}
-We begin by giving some definitions from the text where \hcn{} is defined \cite{DBLP:conf/kr/CharalambidisR14}, for the readers' convenience. These definitions are crucial to the understanding of the rest of the text.
+We describe the language by giving some definitions from the text where \hcn{} is defined \cite{DBLP:conf/kr/CharalambidisR14}, for the readers' convenience. These definitions are crucial to the understanding of the rest of the text.
 
 \begin{definition}{\emph{Types}}
 
@@ -687,7 +687,7 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
         \begin{enumerate}
           \item if \msf{R \in \widehat{U}},
                 then \msf{B' = \sim \exists \widehat{U}' \left( A' \theta \right)},
-                where substitution \msf{\theta = \left\{ R \middle/ \left( \lambda X . \left( X \approx E \right) \bigvee_{\kappa} R' \right) \right\}}, \msf{R'} is a predicate variable of the same type as \msf{R} and \msf{\widehat{U}'} is the same as \msf{\widehat{U}}, only the variable \msf{R} has been replaced with \msf{R'};
+                where substitution \msf{\theta = \left\{ R \middle/ \left( \lambda X . \left( X \approx E \right) \bigvee_{\kappa} R' \right) \right\}}, \msf{R'} is a predicate variable of the same type as \msf{R} and \msf{\widehat{U}'} is the same as \msf{\widehat{U}}, except that variable \msf{R} has been replaced with \msf{R'};
           \item if \msf{R \not \in \widehat{U}} and \msf{n > 1},
                 then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~\land \sim \exists \widehat{U}_2 ~ A' \right) \land B},
                 where \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i} and \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1};
@@ -706,7 +706,7 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
                 then \msf{B' = \sim \exists \widehat{U}' \left( A' \theta \right)},
                 where substitution \\ \msf{\theta = \left\{ R \middle/ \left( \lambda X . \sim \exists \widehat{V} \left( X \approx E \right) \bigwedge_{\kappa} R' \right) \right\}},
                 \msf{R'} is a predicate variable of the same type \msf{\kappa} as \msf{R}
-                and \msf{\widehat{U}'} is the same as \msf{\widehat{U}}, only the variable \msf{R} has been replaced with \msf{R'};
+                and \msf{\widehat{U}'} is the same as \msf{\widehat{U}}, except that variable \msf{R} has been replaced with \msf{R'};
           \item if \msf{R \not\in \widehat{U}} and \msf{n > 1},
                 then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~ \land \sim \exists \widehat{U}_2 ~ A' \right) \land B},
                 where \msf{\widehat{U}_1} are the variables in \msf{\widehat{U}} that are free in \msf{A_i} and \msf{\widehat{U}_2} are the variables in \msf{\widehat{U}} not in \msf{\widehat{U}_1};
@@ -718,7 +718,7 @@ Then, we say that \msf{B} is \emph{negatively-reduced} to \msf{B'} if one of the
           \item if \msf{R \in \widehat{U}},
                 then \msf{B' = \sim \exists \widehat{U}' \left( A' \theta \right)},
                 where substitution \\ \msf{\theta = \left\{ R \middle/ \left( \lambda X . \exists \widehat{V} \left( X \approx E \right) \bigvee_{\kappa} R' \right) \right\}},
-                \msf{R'} is a predicate variable of the same type \msf{\kappa} as \msf{R} and \msf{\widehat{U}'} is the same as \msf{\widehat{U}}, only the variable \msf{R} has been replaced with \msf{R'};
+                \msf{R'} is a predicate variable of the same type \msf{\kappa} as \msf{R} and \msf{\widehat{U}'} is the same as \msf{\widehat{U}}, except that variable \msf{R} has been replaced with \msf{R'};
           \item if \msf{R \not\in \widehat{U}} and \msf{n > 1},
                 then \msf{B' = \sim \exists \widehat{U}_1 ~ A_i \lor \exists \widehat{U}_1 \left( A_i ~ \land \sim \exists \widehat{U}_2 ~ A' \right) \land B};
           \item if \msf{R \not\in \widehat{U}}, \msf{n = 1} and \msf{\widehat{V}} is non-empty, \\
