@@ -109,7 +109,7 @@
   \begin{english}
     Constructive negation is a logic programming negation method that allows the handling of non-ground negative literals. Logic programming systems which are enhanced with constructive negation may produce not only equalities (assignments or unifications of variables), but also inequalities, that, roughly speaking, restrict variables to be different from some value.
 
-    Extensional higher-order logic programming is a logic programming paradigm that extends classical (first-order) logic programming by introducing higher-order terms, while preserving all the well-known properties of the former.
+    Extensional higher-order logic programming is a logic programming paradigm that extends classical (first-order) logic programming by introducing higher-order terms, while preserving all the well-known properties of the former. These higher-order terms (variables) represent sets, which contain the elements for which the former succeeds.
 
     An extensional higher-order logic programming language called HOPES (\h{}) has been recently proposed. \h{} has been enhanced with constructive negation to create \hcn{} (HOPES with constructive negation).
 
@@ -123,7 +123,7 @@
   \begin{greek}
     Η κατασκευαστική άρνηση είναι μια μέθοδος άρνησης στον λογικό προγραμματισμό, η οποία επιτρέπει το χειρισμό μη-συγκεκριμενοποιημένων αρνητικών προτάσεων. Τα συστήματα λογικού προγραμματισμού τα οποία είναι επαυξημένα με κατασκευαστική άρνηση μπορούν δυνητικά να παράγουν όχι μόνο ισότητες (αναθέσεις ή ενοποιήσεις μεταβλητών), αλλά και ανισότητες, οι οποίες, γενικά μιλώντας, περιορίζουν τις μεταβλητές έτσι ώστε να είναι διαφορετικές από κάποια τιμή.
 
-    Ο εκτατικός λογικός προγραμματισμός υψηλής τάξης είναι ένα παράδειγμα λογικού προγραμματισμού που επεκτείνει τον κλασικό (πρώτης τάξης) λογικό προγραμματισμό εισάγοντας όρους υψηλής τάξης, ενώ παράλληλα διατηρεί τις καλά ορισμένες ιδιότητες του προηγούμενου.
+    Ο εκτατικός λογικός προγραμματισμός υψηλής τάξης είναι ένα παράδειγμα λογικού προγραμματισμού που επεκτείνει τον κλασικό (πρώτης τάξης) λογικό προγραμματισμό εισάγοντας όρους υψηλής τάξης, ενώ παράλληλα διατηρεί τις καλά ορισμένες ιδιότητες του προηγούμενου. Αυτοί οι υψηλής τάξης όροι αναπαριστούν σύνολα, τα οποία περιλαμβάνουν στοιχεία για τα οποία οι προηγούμενοι είναι αληθείς.
 
     Μια γλώσσα λογικού προγραμματισμού υψηλής τάξης με όνομα HOPES (\h{}) έχει προταθεί πρόσφατα. Η γλώσσα αυτή έχει επαυξηθεί με κατασκευαστική άρνηση για να διαμορφωθεί η γλώσσα \hcn{} (HOPES with constructive negation).
 
@@ -196,7 +196,7 @@
 
 While the aforementioned implementation works fine for positive first and higher-order terms, as well as for negative first-order terms, when it comes to negative higher-order terms, it falls short to deliver the intended results.
 
-The objective of this thesis is, initially, the identification of the rules in the proof procedure of \hcn{} that are problematic and contribute to the incorrect behaviour of the implementation. Thereinafter, the various ways to fix the unwanted behaviour shall be considered and a solution to the problem shall be given.
+The objective of this thesis is, initially, the identification of the rules in the proof procedure of \hcn{} that are problematic and contribute to the impractical behaviour of the implementation. Thereinafter, the various ways to fix the unwanted behaviour shall be considered and a solution to the problem shall be given.
 
 \section{Motivation}
 Some problems (i.e. predicates) can be expressed better and more elegantly via negation. Giving the programmer the ability to write such programs, makes the language a very powerful tool.
@@ -220,17 +220,19 @@ would return in \msf{P} all subsets of the set \msf{\left\{ 0, 1, 2 \right\}}.
 
 What makes the above program powerful, is the ability to write the first rule, which makes use of constructive negation, in order to obtain answers by negating the very simple second rule. The second rule itself is not very useful in the sense that it states something very trivial.
 
-If we try and think of how we would write the same program in a positive logic, then we would normally have to check whether every element of \msf{P} also exists in \msf{Q}. Namely, for all \msf{X \in P}, is \msf{Q(X)} true? This is considerably harder to express, because it involves iterating through \msf{P} (in some way). However, the problem is way more easy to express in a negative logic: \msf{P} is a subset of \msf{Q} if there doesn't exist any \msf{X}, such that \msf{X} is in \msf{P} but not in \msf{Q}.
+If we try and think of how we would write the same program in a positive logic, then we would normally have to check whether every element of \msf{P} also exists in \msf{Q}. Namely, for all \msf{X \in P}, is \msf{Q(X)} true? This is considerably harder to express, if possible at all (in Horn logic), because it involves iterating through \msf{P} (in some way). However, the problem is way more easy to express in a negative logic: \msf{P} is a subset of \msf{Q} if there doesn't exist any \msf{X}, such that \msf{X} is in \msf{P} but not in \msf{Q}. Therefore, negation adds to the expressivity of the language, i.e. there are programs using negation that cannot be rephrased as positive ones.
 \end{example}
 
-The most common logic approach when it comes to negation in logic programming is negation as failure. Unfortunately, due to its nature, negation as failure does not provide variable bindings for a negated query. We would like an approach that, given a negated query, it returns variable bindings (or inequalities). Constructive negation does exactly that. In the example above, notice that if the \texttt{not(non\_subset)} subgoal could not provide variable bindings, it would be impossible to answer the \texttt{subset} query.
+The most common logic approach when it comes to negation in logic programming is negation as failure. Unfortunately, due to its nature, negation as failure does not provide variable bindings for a negated query. In SLDNF (the basic negation as failure proof procedure) only ``allowed'' programs (a subclass of all programs) can be proved. If the program is not allowed, then the correctness theorem for SLDNF does not hold. The real issue for higher-order logic programming is that there are many programs which are not allowed at all. Constructive negation alleviates both the above restrictions by introducing inequalities and the ``not in'' property for higher-order (set) variables. In the example above, notice that if the \texttt{not(non\_subset(P,q))} subgoal could not provide variable bindings, it would be impossible to answer the \texttt{subset(P,q)} query.
 
-The above example lays solid ground for solving generate and test type of problems. Suppose that we have a collection of objects that we want to test against some property. The \texttt{subset} predicate could serve as the generator of sets of objects that we want to test and will prove of special importance in the rest of the thesis. What we want, is to successfully implement the proof procedure that will give the correct answers to queries in programs like the one in example \ref{ex:subset}.
+% The most common logic approach when it comes to negation in logic programming is negation as failure. Unfortunately, due to its nature, negation as failure does not provide variable bindings for a negated query. We would like an approach that, given a negated query, it returns variable bindings (or inequalities). Constructive negation does exactly that. In the example above, notice that if the \texttt{not(non\_subset(P,q))} subgoal could not provide variable bindings, it would be impossible to answer the \texttt{subset(P,q)} query.
+
+The above example lays solid ground for solving generate and test type of problems. Suppose that we have a collection of objects that we want to test against some property. The \texttt{subset} predicate could serve as the generator of sets of objects that we want to test and will prove of special importance in the rest of the thesis. What we want, is to successfully implement the proof procedure that will give the expected answers to queries in programs like the one in example \ref{ex:subset}.
 
 \subsection*{Preference-based queries}
 The above paradigm can be applied to another interesting class of applications. An interpreter that supports higher-order predicates in conjunction with constructive negation is a system that can potentially answer preference-based queries.
 
-In \cite{DBLP:conf/ppdp/CharalambidisRT16}, Charalambidis et al. propose the use of higher-order logic programming as a logical framework that handles preference-based queries. The aforementioned framework supports both \emph{preferences over tuples}, as well as \emph{preferences over sets}. It is shown that while the former can be easily expressed in first-order logic as well, preferences over tuples are more complex and could be better approached by using a higher-order logic programming language with extensional semantics.
+In \cite{DBLP:conf/ppdp/CharalambidisRT16}, Charalambidis et al. propose the use of higher-order logic programming as a logical framework that handles preference-based queries. The aforementioned framework supports both \emph{preferences over tuples}, as well as \emph{preferences over sets}. It is shown that while the former can be easily expressed in first-order logic as well, preferences over tuples are more complex and could be better approached by using a higher-order logic programming language that supports existential higher-order variables. The extensional approach that is presented in \cite{DBLP:conf/ppdp/CharalambidisRT16}, is a natural candidate for implementing preferences over sets since the binding for higher-order variables are essentially sets.
 
 In extensional languages, two sets that contain the same elements are considered equal. Working with sets in an extensional way is one of the main motivating points that led to the creation of \h{}. Working with and stating set preferences is one of the main motivating points that led to the creation of \hcn{}.
 
@@ -240,6 +242,30 @@ Notice the order of preferences above. The first is the genre. You absolutely en
 
 The above problem can be reduced to the selection of the subsets of a collection of books that satisfy the imposed preferences. Those preferences over sets can be expressed more elegantly and more efficiently in an extensional higher-order language with constructive negation \cite{DBLP:conf/ppdp/CharalambidisRT16}.
 
+\section{Overview}
+To get a taste of where and how the current approach fails, consider a higher-order logic program containing the rules of example \ref{ex:subset}. The problematic point, which will be fully elaborated later, is the way that the current implementation constructs the higher-order variable values (sets).
+
+Given the query:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- subset(P, q).
+\end{lstlisting}
+Then, the naive approach which is currently employed and involves the selection of the left-most subgoal (exactly like PROLOG does), will answer:
+\begin{lstlisting}[language=Prolog,frame=single]
+  yes
+  P = { 0 } ;
+
+  yes
+  P = { 0, 0 } ;
+
+  yes
+  P = { 0, 0, 0 } ;
+
+  ...
+\end{lstlisting}
+The problem comes down to the way the next candidate value to include in \msf{P} is considered. The naive approach takes no information into account from the context (namely, the values already in \msf{P}) and leads to the above result. The problem is two-fold: not only the returned answers contain duplicates, but also the procedure gets ``stuck'', i.e. some correct answers will never be returned (e.g. in the above, the implementation will continue returning ``sets'' that only contain zeroes, for ever).
+
+The proposed approach involves the introduction of restrictions (constraints), so that the answer set which represents \msf{P} will only contain the expected members. This will in turn enable the implementation to avoid getting into a loop of returning meaningless answers, like above.
+
 \section{Thesis Structure}
 The rest of this thesis is organised as follows. Chapter \ref{chap:background} provides some background on the essential terms of negation as failure, constructive negation and higher-order logic programming. In chapter \ref{chap:hcn} the higher-order logic programming language \hcn{} is defined. In chapter \ref{chap:proof} the rules that make up the proof procedure of \hcn{} are outlined and the problem that makes the implementation challenging is identified and presented. Chapter \ref{chap:approach} shows the proposed approach to overcome the problem and outlines possible limitations. Finally, chapter \ref{chap:conclusion} concludes the thesis and outlines the various possibilities for future work.
 
@@ -247,9 +273,9 @@ The rest of this thesis is organised as follows. Chapter \ref{chap:background} p
 \label{chap:background}
 
 \section{Negation as Failure}
-Negation as failure is the most widely used approach for handling negation in logic programming systems. The simplicity in its implementation as well as its efficiency make it a really attractive option to employ.
+Negation as failure \cite{Lloyd:1987:FLP:39279} is the most widely used approach for handling negation in logic programming systems. The simplicity in its implementation as well as its efficiency make it a really attractive option to employ.
 
-These two pros of negation as failure originate from the simplicity of its operational semantics: \emph{If P cannot be proved based on the facts of the knowledge base (of the program), then assume that P is false}. The previous statement is also know as the \emph{closed world assumption rule}. This is an extremely simple approach that greatly simplifies the handling of negative literals. Given a negative literal, e.g. \msf{not(p)}, all one has to do is run the positive version of it, i.e. \msf{p}. If it succeeds, then fail. If it fails, then succeed.
+These two advantages of negation as failure originate from the simplicity of its operational semantics: \emph{If P cannot be proved based on the facts of the knowledge base (of the program), then assume that P is false}. The previous statement is also know as the \emph{closed world assumption rule}. This is an extremely simple approach that greatly simplifies the handling of negative literals. Given a negative literal, e.g. \msf{not(p)}, all one has to do is run the positive version of it, i.e. \msf{p}. If it succeeds, then fail. If it fails, then succeed.
 
 This behaviour can be easily demonstrated if we consider the usual negation as failure implementation in Prolog, using cut and fail:
 
@@ -402,13 +428,13 @@ The second and the fourth answers above give a format for \texttt{X} along with 
 
 
 \section{Extensional Higher-Order Logic Programming}
-Extensional higher-order logic programming has been recently proposed by Charalambidis et al. in \cite{DBLP:journals/tocl/CharalambidisHRW13} as an extension of classical, first-order logic programming. The principal idea in higher-order logic programming is that program predicates denote sets of objects and one can reason about such sets, i.e. use them in rules and facts. By looking at the name of this paradigm, we can see that it is made up of two terms: \emph{extensional} and \emph{higher-order}.
+Extensional higher-order logic programming was originally introduced by William W. Wadge \cite{DBLP:conf/slp/Wadge91} with Charalambidis et al. having also worked on that idea recently \cite{DBLP:journals/tocl/CharalambidisHRW13}. The paragim is essentially an extension of classical, first-order logic programming and its principal idea is that program predicates denote sets of objects and one can reason about such sets, i.e. use them in rules and facts. By looking at the name of this paradigm, we can see that it is made up of two terms: \emph{extensional} and \emph{higher-order}.
 
 The term \emph{higher-order} refers to the capability of applying and passing around predicates and predicate variables as parameters. This is the most popular feature of higher-order logic programming languages like HiLog and allows for the sets-based reasoning that was mentioned above.
 
 The term \emph{extensional} refers to the way program predicates can be passed and used, or otherwise, to what makes up a predicate or what a predicate really is. In an extensional language, two predicates are considered to be equal (i.e. the same) if they are true for the same set of arguments. The opposite of this term is \emph{intentional} and in languages belonging to this category (e.g. HiLog), predicates are more than just a set of arguments for which they are true (e.g. they are also discriminated by their name).
 
-The difference between intensionality and extensionality is a foundamental one and, while at first sight intensionality may seem more natural for real world relations, extensionality better materialises our mathematical definition of what a relation is. To better understand the above, consider the following example from \cite{DBLP:journals/tocl/CharalambidisHRW13}.
+The difference between intensionality and extensionality is a fundamental one and, while at first sight intensionality may seem more natural for real world relations, extensionality better materialises our mathematical definition of what a relation is. To better understand the above, consider the following example from \cite{DBLP:journals/tocl/CharalambidisHRW13}.
 
 \begin{example} Consider the predicate \texttt{all\_members(L, P)}, which is true if all elements of a list \texttt{L} have property \texttt{P}:
 \begin{lstlisting}[language=Prolog,frame=single]
@@ -739,7 +765,7 @@ Recall that predicates in \h{} represent sets. In \h{}, a set is constructed via
 
 The above bracket-notion is just a short (or pretty-print) version of the following:
 \begin{center}
-  \msf{P = a ~\bigvee_{\pi}~ \big( b ~\bigvee_{\pi}~ \big( c ~\bigvee_{\pi}~ L \big) \big)}
+  \msf{P = \{ a \} ~\bigvee_{\pi}~ \{ b \} ~\bigvee_{\pi}~ \{ c \} ~\bigvee_{\pi}~ L}
 \end{center}
 \end{example}
 
@@ -765,7 +791,7 @@ The above idea translates to appending \msf{B} (the negated expression) itself i
 Notice however that, theoretically, the above procedure is perfectly fine, because the rules do not make any assumption about the expression selection policy. There exist paths in the computation tree that ``escape'' from the infinite recursion and a non-deterministic policy may follow these paths. The problem is that when it comes to implementing things (writing algorithms), we cannot employ non-deterministic strategies.
 
 \section{Identifying the Problem}
-While being theoretically correct, the above approach does not work if implemented blindly. The reason is the repeated subgoal \msf{B}. As discussed earlier, when a higher-order variable \msf{R} is encountered, \msf{B} is re-added to the goal list in order to explore whether \msf{R} can contain extra elements. However, notice that \msf{B} is repeated exactly ``as is'', without any care being taken in order to restrict the new values that are to be added to \msf{R}.
+While being theoretically correct, the above approach does not work if implemented in a naive way (for example, selecting the left-most reducable literal in every step of the derivation). The reason is the repeated subgoal \msf{B}. As discussed earlier, when a higher-order variable \msf{R} is encountered, \msf{B} is re-added to the goal list in order to explore whether \msf{R} can contain extra elements. However, notice that \msf{B} is repeated exactly ``as is'', without any care being taken in order to restrict the new values that are to be added to \msf{R}.
 
 If we now look at this procedure from an implementation point of view, it is only logical that exactly the same computation steps will be repeated, because \msf{B} is exactly the same as before. It seems inevitable that the new goal will produce exactly the same bindings as the previous one. And this is actually the case, which is easily demonstrable if we look at the proof procedure computation steps of an example.
 
@@ -1620,7 +1646,9 @@ This is however not enough, because when the computation backtracks, the inequal
 Clearly, another tweak is necessary in order to avoid the above behaviour. One idea would be, instead of inequalities, to introduce ``greater than'' restrictions for the members of \msf{P}. However, for a complete set of answers to be computed, this would require the completed expression of \msf{q} to be ``sorted''. When talking about numbers, sorting is obvious. However, in the general case that is not true. Furthermore, it is not straight-forward neither how one would sort the completed expression, nor how sorting would affect the performance of the implementation.
 
 \section{Implementation}
-A prototype implementation of the above modified procedure can be found at the following GitHub repository: \url{https://github.com/errikos/hopes} (branch \texttt{cn\_restrict}). The aforementioned implementation is in essence the same with Angelos Charalambidis' implementation, with minor changes to reflect the modified procedure. It is written in Haskell, which is provably the most appropriate language to implement interpreters for languages whose definition is given via ``rules'', like the case with \hcn{}.
+A prototype implementation of the above modified procedure can be found at the following GitHub repository: \url{https://github.com/errikos/hopes} (branch \texttt{cn\_restrict}). The aforementioned implementation is in essence the same with Angelos Charalambidis' implementation, with minor changes to reflect the modified procedure and it is written in Haskell.
+
+%It is written in Haskell, which is provably the most appropriate language to implement interpreters for languages whose definition is given via ``rules'', like the case with \hcn{}.
 
 \chapter{CONCLUSIONS AND FUTURE WORK}
 \label{chap:conclusion}
