@@ -588,6 +588,57 @@ The expression \msf{E} on the right-hand side of the completed definition of \ms
 Let \msf{P} be a program. Then, the \emph{completion} \msf{comp(P)} of \msf{P} is the set consisting of all the completed definitions for all predicate constants that appear in \msf{P}.
 \end{definition}
 
+\section{Examples}
+The following examples consist valid higher-order logic programs with respect to \hcn{}.
+\begin{example} Consider the following program:
+\begin{lstlisting}[language=Prolog,frame=single]
+  p(Q) :- Q(a), Q(b).
+\end{lstlisting}
+When taking into account that \texttt{p} represents a set, we can read the above rule as: ``\texttt{p} is a predicate that is true for all relations that contain, at least, \texttt{a} and \texttt{b}''.
+
+Therefore, given the query:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- p(R).
+\end{lstlisting}
+the implementation is expected to answer something of the form:
+\begin{lstlisting}[language=Prolog,frame=single,mathescape=true]
+  yes
+  R = { a, b } $\cup$ L
+\end{lstlisting}
+
+Following \hcn{} syntax, the above rule would be written as:
+\begin{lstlisting}[mathescape=true]
+  p $\leftarrow$ $\lambda$Q.((Q a) $\land$ (Q b))
+\end{lstlisting}
+In the above notation, notice how the parameter list of the definition of \texttt{p} is placed on the right hand side (because of \texttt{p} being defined as a lambda expression).
+\end{example}
+
+\begin{example} Consider the following higher-order logic program:
+\begin{lstlisting}[language=Prolog,frame=single]
+  band(B) :- singer(S), B(S), guitarist(G), B(G).
+\end{lstlisting}
+The above rule states that \texttt{B} is a band if it contains at least one singer and one guitarist. Notice how \texttt{S} and \texttt{G} are first-order variables, while \texttt{B} is a higher-order (to be exact, second-order) one.
+
+One interesting thing to notice here, is how \texttt{B} is constructed. Subgoal \texttt{singer\{G\}} will enumerate all possible singers, while subgoal \texttt{guitarist\{G\}} will enumerate all possible guitarists. Finally, subgoal \texttt{B\{X\}} ``associates'' (includes) the respective \texttt{X} element to the answer set.
+
+Therefore, given a knowledge base consisting of singers and guitartists, the query:
+\begin{lstlisting}[language=Prolog,frame=single]
+  ?- band(B).
+\end{lstlisting}
+will return in \texttt{B} all the combinations of the singers and guitartists that may consist a band (with respect to the definition given by the program).
+
+Following \hcn{} syntax, the above rule would be written as:
+\begin{lstlisting}[mathescape=true]
+  band $\leftarrow$ $\lambda$B.$\exists$S,G((singer S) $\land$ (B S) $\land$ (guitarist G) $\land$ (B G))
+\end{lstlisting}
+and the query, would be written as:
+\begin{lstlisting}[mathescape=true]
+  $\leftarrow$ band B
+\end{lstlisting}
+
+As explained in \cite{DBLP:conf/kr/CharalambidisR14}, \hcn{} operates under the assumption that free variables in a query are the ones for which the proof procedure will attempt to find bindings in order for the goal to be satisfied. That is why variable \texttt{B} above is not existentially quantified.
+\end{example}
+
 \chapter{THE PROOF PROCEDURE}
 \label{chap:proof}
 The proof procedure of \hcn{} incorporates and adapts the constructive negation rules, as described by David Chan in \cite{DBLP:conf/slp/Chan89}, to the higher-order case.
